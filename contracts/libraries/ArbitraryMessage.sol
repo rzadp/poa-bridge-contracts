@@ -21,7 +21,7 @@ library ArbitraryMessage {
     * NOTE: assembly code uses calldatacopy, make sure that message is passed as the first argument in the calldata
     * @param _data encoded message
     */
-    function unpackData(bytes _data)
+    function unpackData(bytes memory _data)
         internal
         pure
         returns (
@@ -30,7 +30,7 @@ library ArbitraryMessage {
             address executor,
             uint32 gasLimit,
             bytes1 dataType,
-            uint256[2] chainIds,
+            uint256[2] memory chainIds,
             uint256 gasPrice,
             bytes memory data
         )
