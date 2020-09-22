@@ -26,7 +26,7 @@ contract Claimable {
     }
 
     function claimErc20Tokens(address _token, address _to) internal {
-        ERC20Basic token = ERC20Basic(_token);
+        ERC20 token = ERC20(_token);
         uint256 balance = token.balanceOf(this);
         safeTransfer(_token, _to, balance);
     }
