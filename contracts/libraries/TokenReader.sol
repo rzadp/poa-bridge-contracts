@@ -12,7 +12,7 @@ library TokenReader {
     * @param _token address of the token contract.
     * @return token name as a string or an empty string if none of the methods succeeded.
     */
-    function readName(address _token) internal view returns (string) {
+    function readName(address _token) internal view returns (string memory) {
         uint256 ptr;
         uint256 size;
         assembly {
@@ -66,7 +66,7 @@ library TokenReader {
     * @param _token address of the token contract.
     * @return token symbol as a string or an empty string if none of the methods succeeded.
     */
-    function readSymbol(address _token) internal view returns (string) {
+    function readSymbol(address _token) internal view returns (string memory) {
         uint256 ptr;
         uint256 size;
         assembly {
