@@ -2,7 +2,7 @@ pragma solidity ^0.5.0;
 
 import "openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
-import "openzeppelin-solidity/contracts/AddressUtils.sol";
+import "openzeppelin-solidity/contracts/utils/Address.sol";
 import "../interfaces/IChai.sol";
 import "../interfaces/ERC677Receiver.sol";
 import "./Claimable.sol";
@@ -28,7 +28,7 @@ contract InterestReceiver is ERC677Receiver, Ownable, Claimable, TokenSwapper {
     * @param _receiverInXDai address of the receiver account, in the xDai chain
     */
     constructor(address _owner, address _bridgeContract, address _receiverInXDai) public {
-        require(AddressUtils.isContract(_bridgeContract));
+        require(Address.isContract(_bridgeContract));
         _transferOwnership(_owner);
         bridgeContract = _bridgeContract;
         receiverInXDai = _receiverInXDai;
@@ -40,7 +40,7 @@ contract InterestReceiver is ERC677Receiver, Ownable, Claimable, TokenSwapper {
     * @param _bridgeContract address of new contract in the foreign chain
     */
     function setBridgeContract(address _bridgeContract) external onlyOwner {
-        require(AddressUtils.isContract(_bridgeContract));
+        require(Address.isContract(_bridgeContract));
         bridgeContract = _bridgeContract;
     }
 
