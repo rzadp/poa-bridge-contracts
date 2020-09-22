@@ -4,7 +4,6 @@ import "../../libraries/Message.sol";
 import "../../upgradeability/EternalStorage.sol";
 import "../BasicHomeBridge.sol";
 import "./RewardableHomeBridgeNativeToErc.sol";
-import "../../libraries/Address.sol";
 
 contract HomeBridgeNativeToErc is EternalStorage, BasicHomeBridge, RewardableHomeBridgeNativeToErc {
     function() public payable {
@@ -132,7 +131,7 @@ contract HomeBridgeNativeToErc is EternalStorage, BasicHomeBridge, RewardableHom
             valueToTransfer = valueToTransfer.sub(fee);
         }
 
-        Address.safeSendValue(_recipient, valueToTransfer);
+        PoaAddress.safeSendValue(_recipient, valueToTransfer);
         return true;
     }
 
