@@ -94,8 +94,8 @@ contract BasicAMB is BasicBridge, VersionableAMB {
      * Internal function for updating nonce value
      * @param _nonce new nonce value
      */
-    function _setNonce(uint64 _nonce) internal {
-        uintStorage[NONCE] = uint256(_nonce);
+    function _setNonce(uint64 __nonce) internal {
+        uintStorage[NONCE] = uint256(__nonce);
     }
 
     /**
