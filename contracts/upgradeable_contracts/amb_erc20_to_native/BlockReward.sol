@@ -42,7 +42,7 @@ contract BlockReward is EternalStorage {
     * @dev Return the allowed bridge addresses.
     * @return List of bridge contracts addresses.
     */
-    function bridgesAllowed() public view returns (address[bridgesAllowedLength]) {
+    function bridgesAllowed() public view returns (address [bridgesAllowedLength] memory) {
         // These values must be changed before deploy
         return [address(0x0000000000000000000000000000000000000000)];
     }
@@ -80,7 +80,7 @@ contract BlockReward is EternalStorage {
     * @param kind list of reward types for addresses in benefactors list, should be empty.
     * @return tuple of addresses list and values list of the same length that describes where and how much new coins should be minted.
     */
-    function reward(address[] benefactors, uint16[] kind) external onlySystem returns (address[], uint256[]) {
+    function reward(address[] calldata benefactors, uint16[] calldata kind) external onlySystem returns (address[] memory, uint256[] memory) {
         require(benefactors.length == 0);
         require(kind.length == 0);
 
