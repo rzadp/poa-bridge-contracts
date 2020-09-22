@@ -3,7 +3,7 @@ pragma solidity ^0.5.0;
 import "./Ownable.sol";
 import "../interfaces/IAMB.sol";
 import "../libraries/Bytes.sol";
-import "openzeppelin-solidity/contracts/AddressUtils.sol";
+import "openzeppelin-solidity/contracts/utils/Address.sol";
 
 /**
 * @title BasicAMBMediator
@@ -78,7 +78,7 @@ contract BasicAMBMediator is Ownable {
     * @param _bridgeContract the address of the bridge contract.
     */
     function _setBridgeContract(address _bridgeContract) internal {
-        require(AddressUtils.isContract(_bridgeContract));
+        require(Address.isContract(_bridgeContract));
         addressStorage[BRIDGE_CONTRACT] = _bridgeContract;
     }
 
