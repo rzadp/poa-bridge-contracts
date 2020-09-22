@@ -1,6 +1,5 @@
 pragma solidity ^0.5.0;
 
-import "openzeppelin-solidity/contracts/token/ERC20/DetailedERC20.sol";
 import "./BasicMultiAMBErc20ToErc677.sol";
 import "./HomeMultiAMBErc20ToErc677.sol";
 import "../../libraries/TokenReader.sol";
