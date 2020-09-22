@@ -1,4 +1,4 @@
-pragma solidity 0.4.24;
+pragma solidity ^0.5.0;
 
 interface IRewardableValidators {
     function isValidator(address _validator) external view returns (bool);
