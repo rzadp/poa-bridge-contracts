@@ -1,7 +1,7 @@
 pragma solidity ^0.5.0;
 
 import "../../interfaces/IBlockReward.sol";
-import "../../libraries/Address.sol";
+import "../../libraries/Address.sol" as PoaAddress;
 import "../ValidatorsFeeManager.sol";
 import "../BlockRewardBridge.sol";
 
@@ -16,7 +16,7 @@ contract FeeManagerErcToNative is ValidatorsFeeManager, BlockRewardBridge {
     }
 
     function onSignatureFeeDistribution(address _rewardAddress, uint256 _fee) internal {
-        Address.safeSendValue(_rewardAddress, _fee);
+        PoaAddress.safeSendValue(_rewardAddress, _fee);
     }
 
     function getAmountToBurn(uint256 _value) public view returns (uint256) {
