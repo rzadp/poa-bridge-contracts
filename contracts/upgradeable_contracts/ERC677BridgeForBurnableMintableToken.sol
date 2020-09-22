@@ -1,4 +1,4 @@
-pragma solidity 0.4.24;
+pragma solidity ^0.5.0;
 
 import "./ERC677Bridge.sol";
 import "../interfaces/IBurnableMintableERC677Token.sol";

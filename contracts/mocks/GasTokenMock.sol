@@ -1,5 +1,5 @@
 //solhint-disable
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.0;
 
 contract Rlp {
     uint256 constant ADDRESS_BYTES = 20;
