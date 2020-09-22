@@ -43,7 +43,7 @@ contract BlockRewardMock {
         uintStorage[hash] = uintStorage[hash].add(_amount);
     }
 
-    function setValidatorsRewards(address[] _initialValidators) external {
+    function setValidatorsRewards(address[] calldata _initialValidators) external {
         validatorList = _initialValidators;
     }
 
