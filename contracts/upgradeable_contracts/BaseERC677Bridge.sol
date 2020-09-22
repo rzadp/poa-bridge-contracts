@@ -1,6 +1,6 @@
 pragma solidity ^0.5.0;
 
-import "openzeppelin-solidity/contracts/AddressUtils.sol";
+import "openzeppelin-solidity/contracts/utils/Address.sol";
 import "./BasicTokenBridge.sol";
 import "../interfaces/ERC677.sol";
 import "../interfaces/ERC677Receiver.sol";
@@ -13,7 +13,7 @@ contract BaseERC677Bridge is BasicTokenBridge, ERC677Receiver, ERC677Storage, Ch
     }
 
     function setErc677token(address _token) internal {
-        require(AddressUtils.isContract(_token));
+        require(Address.isContract(_token));
         addressStorage[ERC677_TOKEN] = _token;
     }
 
