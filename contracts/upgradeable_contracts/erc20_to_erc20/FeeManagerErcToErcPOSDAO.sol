@@ -8,7 +8,7 @@ contract FeeManagerErcToErcPOSDAO is BlockRewardFeeManager {
     }
 
     function blockRewardContract() external view returns (address) {
-        return _blockRewardContract();
+        return address(_blockRewardContract());
     }
 
     function setBlockRewardContract(address _blockReward) external {
