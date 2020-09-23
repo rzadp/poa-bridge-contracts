@@ -28,8 +28,8 @@ contract ForeignMultiAMBErc20ToErc677 is BasicMultiAMBErc20ToErc677 {
     function initialize(
         address _bridgeContract,
         address _mediatorContract,
-        uint256[3] _dailyLimitMaxPerTxMinPerTxArray, // [ 0 = _dailyLimit, 1 = _maxPerTx, 2 = _minPerTx ]
-        uint256[2] _executionDailyLimitExecutionMaxPerTxArray, // [ 0 = _executionDailyLimit, 1 = _executionMaxPerTx ]
+        uint256[3] calldata _dailyLimitMaxPerTxMinPerTxArray, // [ 0 = _dailyLimit, 1 = _maxPerTx, 2 = _minPerTx ]
+        uint256[2] calldata _executionDailyLimitExecutionMaxPerTxArray, // [ 0 = _executionDailyLimit, 1 = _executionMaxPerTx ]
         uint256 _requestGasLimit,
         address _owner
     ) external onlyRelevantSender returns (bool) {
@@ -67,7 +67,7 @@ contract ForeignMultiAMBErc20ToErc677 is BasicMultiAMBErc20ToErc677 {
     * @param _value amount of transferred tokens.
     * @param _data additional transfer data, can be used for passing alternative receiver address.
     */
-    function onTokenTransfer(address _from, uint256 _value, bytes _data) public returns (bool) {
+    function onTokenTransfer(address _from, uint256 _value, bytes memory _data) public returns (bool) {
         if (!lock()) {
             ERC677 token = ERC677(msg.sender);
             bridgeSpecificActionsOnTokenTransfer(token, _from, _value, _data);
@@ -114,15 +114,16 @@ contract ForeignMultiAMBErc20ToErc677 is BasicMultiAMBErc20ToErc677 {
      * @param _value requsted amount of bridged tokens
      * @param _data alternative receiver, if specified
      */
-    function bridgeSpecificActionsOnTokenTransfer(ERC677 _token, address _from, uint256 _value, bytes _data) internal {
+    function bridgeSpecificActionsOnTokenTransfer(ERC677 _token, address _from, uint256 _value, bytes memory _data) internal {
         if (lock()) return;
 
         bool isKnownToken = isTokenRegistered(_token);
-        if (!isKnownToken) {
-            string memory name = TokenReader.readName(_token);
-            string memory symbol = TokenReader.readSymbol(_token);
-            uint8 decimals = uint8(TokenReader.readDecimals(_token));
 
+        string memory name = TokenReader.readName(_token);
+        string memory symbol = TokenReader.readSymbol(_token);
+        uint8 decimals = uint8(TokenReader.readDecimals(_token));
+
+        if (!isKnownToken) {
             require(bytes(name).length > 0 || bytes(symbol).length > 0);
 
             _initializeTokenBridgeLimits(_token, decimals);
