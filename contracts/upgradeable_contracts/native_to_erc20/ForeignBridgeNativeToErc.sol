@@ -14,10 +14,10 @@ contract ForeignBridgeNativeToErc is
     function initialize(
         address _validatorContract,
         address _erc677token,
-        uint256[3] _dailyLimitMaxPerTxMinPerTxArray, // [ 0 = _dailyLimit, 1 = _maxPerTx, 2 = _minPerTx ]
+        uint256[3] calldata _dailyLimitMaxPerTxMinPerTxArray, // [ 0 = _dailyLimit, 1 = _maxPerTx, 2 = _minPerTx ]
         uint256 _foreignGasPrice,
         uint256 _requiredBlockConfirmations,
-        uint256[2] _homeDailyLimitHomeMaxPerTxArray, // [ 0 = _homeDailyLimit, 1 = _homeMaxPerTx ]
+        uint256[2] calldata _homeDailyLimitHomeMaxPerTxArray, // [ 0 = _homeDailyLimit, 1 = _homeMaxPerTx ]
         address _owner,
         int256 _decimalShift,
         address _bridgeOnOtherSide
@@ -40,10 +40,10 @@ contract ForeignBridgeNativeToErc is
     function rewardableInitialize(
         address _validatorContract,
         address _erc677token,
-        uint256[3] _dailyLimitMaxPerTxMinPerTxArray, // [ 0 = _dailyLimit, 1 = _maxPerTx, 2 = _minPerTx ]
+        uint256[3] calldata _dailyLimitMaxPerTxMinPerTxArray, // [ 0 = _dailyLimit, 1 = _maxPerTx, 2 = _minPerTx ]
         uint256 _foreignGasPrice,
         uint256 _requiredBlockConfirmations,
-        uint256[2] _homeDailyLimitHomeMaxPerTxArray, // [ 0 = _homeDailyLimit, 1 = _homeMaxPerTx ]
+        uint256[2] calldata _homeDailyLimitHomeMaxPerTxArray, // [ 0 = _homeDailyLimit, 1 = _homeMaxPerTx ]
         address _owner,
         address _feeManager,
         uint256 _homeFee,
@@ -61,7 +61,7 @@ contract ForeignBridgeNativeToErc is
             _decimalShift,
             _bridgeOnOtherSide
         );
-        require(AddressUtils.isContract(_feeManager));
+        require(Address.isContract(_feeManager));
         addressStorage[FEE_MANAGER_CONTRACT] = _feeManager;
         _setFee(_feeManager, _homeFee, HOME_FEE);
         setInitialize();
@@ -79,16 +79,16 @@ contract ForeignBridgeNativeToErc is
     function _initialize(
         address _validatorContract,
         address _erc677token,
-        uint256[3] _dailyLimitMaxPerTxMinPerTxArray, // [ 0 = _dailyLimit, 1 = _maxPerTx, 2 = _minPerTx ]
+        uint256[3] memory _dailyLimitMaxPerTxMinPerTxArray, // [ 0 = _dailyLimit, 1 = _maxPerTx, 2 = _minPerTx ]
         uint256 _foreignGasPrice,
         uint256 _requiredBlockConfirmations,
-        uint256[2] _homeDailyLimitHomeMaxPerTxArray, // [ 0 = _homeDailyLimit, 1 = _homeMaxPerTx ]
+        uint256[2] memory _homeDailyLimitHomeMaxPerTxArray, // [ 0 = _homeDailyLimit, 1 = _homeMaxPerTx ]
         address _owner,
         int256 _decimalShift,
         address _bridgeOnOtherSide
     ) internal {
         require(!isInitialized());
-        require(AddressUtils.isContract(_validatorContract));
+        require(Address.isContract(_validatorContract));
         require(_owner != address(0));
 
         addressStorage[VALIDATOR_CONTRACT] = _validatorContract;
