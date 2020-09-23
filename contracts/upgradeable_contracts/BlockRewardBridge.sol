@@ -19,11 +19,16 @@ contract BlockRewardBridge is EternalStorage {
         // Before store the contract we need to make sure that it is the block reward contract in actual fact,
         // call a specific method from the contract that should return a specific value
         bool isBlockRewardContract = false;
-        if (_blockReward.call(BLOCK_REWARD_CONTRACT_ID)) {
-            isBlockRewardContract =
-                IBlockReward(_blockReward).blockRewardContractId() == bytes4(keccak256("blockReward"));
-        } else if (_blockReward.call(BRIDGES_ALLOWED_LENGTH)) {
-            isBlockRewardContract = IBlockReward(_blockReward).bridgesAllowedLength() != 0;
+
+        (bool condition, ) = _blockReward.call(abi.encode(BLOCK_REWARD_CONTRACT_ID));
+          
+        if (condition) {
+            isBlockRewardContract = IBlockReward(_blockReward).blockRewardContractId() == bytes4(keccak256("blockReward"));
+        } else {
+            (condition, ) = _blockReward.call(abi.encode(BRIDGES_ALLOWED_LENGTH));
+            if (condition) {
+                isBlockRewardContract = IBlockReward(_blockReward).bridgesAllowedLength() != 0;
+            }
         }
         require(isBlockRewardContract);
         addressStorage[BLOCK_REWARD_CONTRACT] = _blockReward;
