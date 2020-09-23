@@ -87,7 +87,8 @@ contract ERC677BridgeToken is IBurnableMintableERC677Token, ERC20Detailed, ERC20
      * @param _data set of extra bytes that can be passed to the recipient
      */
     function contractFallback(address _from, address _to, uint256 _value, bytes memory _data) private returns (bool) {
-        return _to.call(abi.encodeWithSelector(ON_TOKEN_TRANSFER, _from, _value, _data));
+        (bool result, ) = _to.call(abi.encodeWithSelector(ON_TOKEN_TRANSFER, _from, _value, _data));
+        return result;
     }
 
     function finishMinting() public returns (bool) {
@@ -98,15 +99,15 @@ contract ERC677BridgeToken is IBurnableMintableERC677Token, ERC20Detailed, ERC20
         revert();
     }
 
-    function claimTokens(address _token, address _to) public onlyOwner validAddress(_to) {
+    function claimTokens(address _token, address payable _to) public onlyOwner validAddress(_to) {
         claimValues(_token, _to);
     }
 
     function increaseAllowance(address spender, uint256 addedValue) public returns (bool) {
-        return super.increaseApproval(spender, addedValue);
+        return super.increaseAllowance(spender, addedValue);
     }
 
     function decreaseAllowance(address spender, uint256 subtractedValue) public returns (bool) {
-        return super.decreaseApproval(spender, subtractedValue);
+        return super.decreaseAllowance(spender, subtractedValue);
     }
 }

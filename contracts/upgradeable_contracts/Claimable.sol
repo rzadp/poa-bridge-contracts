@@ -1,7 +1,7 @@
 pragma solidity ^0.5.0;
 
 import "openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
-import { Address as PoaAddress } from "../libraries/PoaAddress.sol";
+import { Address as PoaAddress } from "../libraries/Address.sol";
 
 contract Claimable {
     bytes4 internal constant TRANSFER = 0xa9059cbb; // transfer(address,uint256)
