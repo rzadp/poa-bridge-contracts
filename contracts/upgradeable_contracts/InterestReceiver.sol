@@ -70,7 +70,7 @@ contract InterestReceiver is ERC677Receiver, Ownable, Claimable, TokenSwapper {
     * @dev ERC677 transfer callback function, received interest is converted from Chai token into Dai
     * and then relayed via bridge to xDai receiver
     */
-    function onTokenTransfer(address, uint256, bytes) external returns (bool) {
+    function onTokenTransfer(address, uint256, bytes calldata) external returns (bool) {
         uint256 chaiBalance = chaiToken().balanceOf(address(this));
         uint256 initialDaiBalance = daiToken().balanceOf(address(this));
         uint256 finalDaiBalance = initialDaiBalance;
