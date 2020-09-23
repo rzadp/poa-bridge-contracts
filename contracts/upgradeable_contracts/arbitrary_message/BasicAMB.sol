@@ -2,6 +2,7 @@ pragma solidity ^0.5.0;
 
 import "../BasicBridge.sol";
 import "./VersionableAMB.sol";
+import "openzeppelin-solidity/contracts/utils/Address.sol";
 
 contract BasicAMB is BasicBridge, VersionableAMB {
     bytes32 internal constant MAX_GAS_PER_TX = 0x2670ecc91ec356e32067fd27b36614132d727b84a1e03e08f412a4f2cf075974; // keccak256(abi.encodePacked("maxGasPerTx"))
@@ -31,7 +32,7 @@ contract BasicAMB is BasicBridge, VersionableAMB {
         address _owner
     ) external onlyRelevantSender returns (bool) {
         require(!isInitialized());
-        require(AddressUtils.isContract(_validatorContract));
+        require(Address.isContract(_validatorContract));
 
         _setChainIds(_sourceChainId, _destinationChainId);
         addressStorage[VALIDATOR_CONTRACT] = _validatorContract;
