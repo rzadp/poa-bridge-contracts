@@ -11,7 +11,7 @@ contract HomeAMB is BasicHomeAMB {
         bool status
     );
 
-    function emitEventOnMessageRequest(bytes32 messageId, bytes encodedData) internal {
+    function emitEventOnMessageRequest(bytes32 messageId, bytes memory encodedData) internal {
         emit UserRequestForSignature(messageId, encodedData);
     }
 
