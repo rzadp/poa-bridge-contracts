@@ -46,8 +46,9 @@ contract RewardableMediator is Ownable {
     * @param _messageId id of the message that generated fee distribution
     */
     function distributeFee(IMediatorFeeManager _feeManager, uint256 _fee, bytes32 _messageId) internal {
-        onFeeDistribution(_feeManager, _fee);
-        _feeManager.call(abi.encodeWithSelector(ON_TOKEN_TRANSFER, address(this), _fee, ""));
+        address __feeManager = address(_feeManager);
+        onFeeDistribution(__feeManager, _fee);
+        __feeManager.call(abi.encodeWithSelector(ON_TOKEN_TRANSFER, address(this), _fee, ""));
         emit FeeDistributed(_fee, _messageId);
     }
 
