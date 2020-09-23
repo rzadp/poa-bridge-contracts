@@ -81,11 +81,11 @@ contract BasicMultiAMBErc20ToErc677 is
     }
 
     /* solcov ignore next */
-    function onTokenTransfer(address _from, uint256 _value, bytes _data) public returns (bool);
+    function onTokenTransfer(address _from, uint256 _value, bytes memory _data) public returns (bool);
 
     /* solcov ignore next */
     function _relayTokens(ERC677 token, address _receiver, uint256 _value) internal;
 
     /* solcov ignore next */
-    function bridgeSpecificActionsOnTokenTransfer(ERC677 _token, address _from, uint256 _value, bytes _data) internal;
+    function bridgeSpecificActionsOnTokenTransfer(ERC677 _token, address _from, uint256 _value, bytes memory _data) internal;
 }
