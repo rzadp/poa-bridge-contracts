@@ -5,8 +5,8 @@ import "./BaseBridgeValidators.sol";
 contract RewardableValidators is BaseBridgeValidators {
     function initialize(
         uint256 _requiredSignatures,
-        address[] _initialValidators,
-        address[] _initialRewards,
+        address[] calldata _initialValidators,
+        address[] calldata _initialRewards,
         address _owner
     ) external onlyRelevantSender returns (bool) {
         require(!isInitialized());
