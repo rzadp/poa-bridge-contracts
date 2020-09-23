@@ -6,7 +6,7 @@ contract ForeignAMB is BasicForeignAMB {
     event UserRequestForAffirmation(bytes32 indexed messageId, bytes encodedData);
     event RelayedMessage(address indexed sender, address indexed executor, bytes32 indexed messageId, bool status);
 
-    function emitEventOnMessageRequest(bytes32 messageId, bytes encodedData) internal {
+    function emitEventOnMessageRequest(bytes32 messageId, bytes memory encodedData) internal {
         emit UserRequestForAffirmation(messageId, encodedData);
     }
 
