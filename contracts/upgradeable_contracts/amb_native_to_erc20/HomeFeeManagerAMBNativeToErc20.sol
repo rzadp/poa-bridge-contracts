@@ -1,6 +1,6 @@
 pragma solidity ^0.5.0;
 
-import "../../libraries/Address.sol";
+import "../../libraries/PoaAddress.sol";
 import "../BaseMediatorFeeManager.sol";
 
 /**
@@ -34,7 +34,7 @@ contract HomeFeeManagerAMBNativeToErc20 is BaseMediatorFeeManager {
     * @param _rewardAddress address that will receive the native tokens.
     * @param _fee amount of native tokens to be distribute.
     */
-    function onFeeDistribution(address _rewardAddress, uint256 _fee) internal {
-        Address.safeSendValue(_rewardAddress, _fee);
+    function onFeeDistribution(address payable _rewardAddress, uint256 _fee) internal {
+        PoaAddress.safeSendValue(_rewardAddress, _fee);
     }
 }
