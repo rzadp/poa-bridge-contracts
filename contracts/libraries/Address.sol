@@ -6,7 +6,7 @@ import "../upgradeable_contracts/Sacrifice.sol";
  * @title Address
  * @dev Helper methods for Address type.
  */
-library PoaAddress {
+library Address {
     /**
     * @dev Try to send native tokens to the address. If it fails, it will force the transfer by creating a selfdestruct contract
     * @param _receiver address that will receive the native tokens
