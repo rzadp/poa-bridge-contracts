@@ -19,7 +19,7 @@ contract BasicForeignBridge is EternalStorage, Validatable, BasicBridge, BasicTo
     * @param message bytes to be relayed
     * @param signatures bytes blob with signatures to be validated
     */
-    function executeSignatures(bytes message, bytes signatures) external {
+    function executeSignatures(bytes calldata message, bytes calldata signatures) external {
         Message.hasEnoughValidSignatures(message, signatures, validatorContract(), false);
 
         address recipient;
