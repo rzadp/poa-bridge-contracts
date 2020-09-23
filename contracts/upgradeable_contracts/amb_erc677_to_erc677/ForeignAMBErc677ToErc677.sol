@@ -54,7 +54,7 @@ contract ForeignAMBErc677ToErc677 is BasicAMBErc677ToErc677 {
         ERC677, /* _token */
         address _from,
         uint256 _value,
-        bytes _data
+        bytes memory _data
     ) internal {
         if (!lock()) {
             passMessage(_from, chooseReceiver(_from, _data), _value);
