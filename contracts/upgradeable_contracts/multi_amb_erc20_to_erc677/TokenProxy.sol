@@ -3,7 +3,7 @@ pragma solidity ^0.5.0;
 import "../../upgradeability/Proxy.sol";
 
 interface IPermittableTokenVersion {
-    function version() external pure returns (string);
+    function version() external pure returns (string memory);
 }
 
 /**
