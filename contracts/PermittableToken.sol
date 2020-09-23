@@ -41,9 +41,7 @@ contract PermittableToken is ERC677BridgeToken {
         require(_sender != address(0));
         require(_recipient != address(0));
 
-        balanceOf(_sender) = balanceOf(_sender).sub(_amount);
-        balanceOf(_recipient) = balanceOf(_recipient).add(_amount);
-        emit Transfer(_sender, _recipient, _amount);
+        _transfer(_sender, _recipient, _amount);
 
         if (_sender != msg.sender) {
             uint256 allowedAmount = allowance(_sender, msg.sender);
@@ -51,8 +49,7 @@ contract PermittableToken is ERC677BridgeToken {
             if (allowedAmount != uint256(-1)) {
                 // If allowance is limited, adjust it.
                 // In this case `transferFrom` works like the generic
-                allowance(_sender, msg.sender) = allowedAmount.sub(_amount);
-                emit Approval(_sender, msg.sender, allowance(_sender, msg.sender));
+                decreaseAllowance(_sender, _amount);
             } else {
                 // If allowance is unlimited by `permit`, `approve`, or `increaseAllowance`
                 // function, don't adjust it. But the expiration date must be empty or in the future
@@ -130,6 +127,7 @@ contract PermittableToken is ERC677BridgeToken {
         uint256 amount = _allowed ? uint256(-1) : 0;
 
         allowance(_holder, _spender) = amount;
+        
         expirations[_holder][_spender] = _allowed ? _expiry : 0;
 
         emit Approval(_holder, _spender, amount);
