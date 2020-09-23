@@ -51,7 +51,7 @@ contract HomeAMBNativeToErc20 is BasicAMBNativeToErc20 {
     * @dev Fallback method to be called to initiate the bridge operation of the native tokens to an erc20 representation
     * that the user will receive in the same address on the other network.
     */
-    function() public payable {
+    function() external payable {
         require(msg.data.length == 0);
         nativeTransfer(msg.sender);
     }
