@@ -15,7 +15,7 @@ contract HomeFeeManagerAMBNativeToErc20 is BaseMediatorFeeManager {
     * @param _fee the fee percentage amount.
     * @param _rewardAccountList list of addresses that will receive the fee rewards.
     */
-    constructor(address _owner, uint256 _fee, address[] _rewardAccountList, address _mediatorContract)
+    constructor(address _owner, uint256 _fee, address[] memory _rewardAccountList, address _mediatorContract)
         public
         BaseMediatorFeeManager(_owner, _fee, _rewardAccountList, _mediatorContract)
     {
@@ -25,7 +25,7 @@ contract HomeFeeManagerAMBNativeToErc20 is BaseMediatorFeeManager {
     /**
     * @dev Fallback method to receive the fees.
     */
-    function() public payable {
+    function() external payable {
         // solhint-disable-previous-line no-empty-blocks
     }
 
