@@ -52,7 +52,7 @@ contract BasicHomeBridge is EternalStorage, Validatable, BasicBridge, BasicToken
         }
     }
 
-    function submitSignature(bytes signature, bytes message) external onlyValidator {
+    function submitSignature(bytes calldata signature, bytes calldata message) external onlyValidator {
         // ensure that `signature` is really `message` signed by `msg.sender`
         require(Message.isMessageValid(message));
         require(msg.sender == Message.recoverAddressFromSignedMessage(signature, message, false));
@@ -95,7 +95,7 @@ contract BasicHomeBridge is EternalStorage, Validatable, BasicBridge, BasicToken
     function onExecuteAffirmation(address, uint256, bytes32) internal returns (bool);
 
     /* solcov ignore next */
-    function onSignaturesCollected(bytes) internal;
+    function onSignaturesCollected(bytes memory) internal;
 
     function numAffirmationsSigned(bytes32 _withdrawal) public view returns (uint256) {
         return uintStorage[keccak256(abi.encodePacked("numAffirmationsSigned", _withdrawal))];
@@ -113,7 +113,7 @@ contract BasicHomeBridge is EternalStorage, Validatable, BasicBridge, BasicToken
         return boolStorage[keccak256(abi.encodePacked("affirmationsSigned", _withdrawal))];
     }
 
-    function signature(bytes32 _hash, uint256 _index) external view returns (bytes) {
+    function signature(bytes32 _hash, uint256 _index) external view returns (bytes memory) {
         bytes32 signIdx = keccak256(abi.encodePacked(_hash, _index));
         return bytesStorage[keccak256(abi.encodePacked("signatures", signIdx))];
     }
@@ -122,15 +122,15 @@ contract BasicHomeBridge is EternalStorage, Validatable, BasicBridge, BasicToken
         return boolStorage[keccak256(abi.encodePacked("messagesSigned", _message))];
     }
 
-    function setSignatures(bytes32 _hash, bytes _signature) internal {
+    function setSignatures(bytes32 _hash, bytes memory _signature) internal {
         bytesStorage[keccak256(abi.encodePacked("signatures", _hash))] = _signature;
     }
 
-    function setMessages(bytes32 _hash, bytes _message) internal {
+    function setMessages(bytes32 _hash, bytes memory _message) internal {
         bytesStorage[keccak256(abi.encodePacked("messages", _hash))] = _message;
     }
 
-    function message(bytes32 _hash) external view returns (bytes) {
+    function message(bytes32 _hash) external view returns (bytes memory) {
         return bytesStorage[keccak256(abi.encodePacked("messages", _hash))];
     }
 
