@@ -63,7 +63,8 @@ contract RewardableBridge is Ownable, FeeTypes {
 
     function _setFee(address _feeManager, uint256 _fee, bytes32 _feeType) internal {
         bytes4 method = _feeType == HOME_FEE ? SET_HOME_FEE : SET_FOREIGN_FEE;
-        require(_feeManager.delegatecall(abi.encodeWithSelector(method, _fee)));
+        (bool condition, ) = _feeManager.delegatecall(abi.encodeWithSelector(method, _fee));
+        require(condition);
     }
 
     function calculateFee(uint256 _value, bool _recover, address _impl, bytes32 _feeType)
@@ -86,12 +87,14 @@ contract RewardableBridge is Ownable, FeeTypes {
     }
 
     function distributeFeeFromSignatures(uint256 _fee, address _feeManager, bytes32 _txHash) internal {
-        require(_feeManager.delegatecall(abi.encodeWithSelector(DISTRIBUTE_FEE_FROM_SIGNATURES, _fee)));
+        (bool condition, ) = _feeManager.delegatecall(abi.encodeWithSelector(DISTRIBUTE_FEE_FROM_SIGNATURES, _fee));
+        require(condition);
         emit FeeDistributedFromSignatures(_fee, _txHash);
     }
 
     function distributeFeeFromAffirmation(uint256 _fee, address _feeManager, bytes32 _txHash) internal {
-        require(_feeManager.delegatecall(abi.encodeWithSelector(DISTRIBUTE_FEE_FROM_AFFIRMATION, _fee)));
+        (bool condition, ) = _feeManager.delegatecall(abi.encodeWithSelector(DISTRIBUTE_FEE_FROM_AFFIRMATION, _fee));
+        require(condition);
         emit FeeDistributedFromAffirmation(_fee, _txHash);
     }
 }
