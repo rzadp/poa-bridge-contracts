@@ -82,14 +82,15 @@ contract InterestReceiver is ERC677Receiver, Ownable, Claimable, TokenSwapper {
             // Dai balance cannot decrease here, so SafeMath is not needed
             uint256 redeemed = finalDaiBalance - initialDaiBalance;
 
-            emit TokensSwapped(chaiToken(), daiToken(), redeemed);
+            emit TokensSwapped(address(chaiToken()), address(daiToken()), redeemed);
 
             // chi is always >= 10**27, so chai/dai rate is always >= 1
             require(redeemed >= chaiBalance);
         }
 
         daiToken().approve(address(bridgeContract), finalDaiBalance);
-        if (!bridgeContract.call(abi.encodeWithSelector(RELAY_TOKENS, receiverInXDai, finalDaiBalance))) {
+        (bool condition,) = bridgeContract.call(abi.encodeWithSelector(RELAY_TOKENS, receiverInXDai, finalDaiBalance));
+        if (!condition) {
             daiToken().approve(address(bridgeContract), 0);
             emit RelayTokensFailed(receiverInXDai, finalDaiBalance);
         }
@@ -100,7 +101,7 @@ contract InterestReceiver is ERC677Receiver, Ownable, Claimable, TokenSwapper {
     * @param _token address of claimed token, address(0) for native
     * @param _to address of tokens receiver
     */
-    function claimTokens(address _token, address _to) external onlyOwner validAddress(_to) {
+    function claimTokens(address _token, address payable _to) external onlyOwner validAddress(_to) {
         require(_token != address(chaiToken()) && _token != address(daiToken()));
         claimValues(_token, _to);
     }
