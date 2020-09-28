@@ -207,7 +207,7 @@ contract HomeAMBErc20ToNative is BasicAMBErc20ToNative, BlockRewardBridge, HomeF
     * @param _token address of the token.
     * @param _to address that will receive the locked tokens on this contract.
     */
-    function claimTokens(address _token, address _to) external onlyIfUpgradeabilityOwner validAddress(_to) {
+    function claimTokens(address _token, address payable _to) external onlyIfUpgradeabilityOwner validAddress(_to) {
         require(_token != address(0));
         claimValues(_token, _to);
     }
@@ -244,9 +244,9 @@ contract HomeAMBErc20ToNative is BasicAMBErc20ToNative, BlockRewardBridge, HomeF
     * @param _receiver particular reward address, where the fee should be sent/minted.
     * @param _fee amount of fee to send/mint to given address.
     */
-    function onFeeDistribution(bytes32 _feeType, address _receiver, uint256 _fee) internal {
+    function onFeeDistribution(bytes32 _feeType, address payable _receiver, uint256 _fee) internal {
         if (_feeType == HOME_TO_FOREIGN_FEE) {
-            Address.safeSendValue(_receiver, _fee);
+            PoaAddress.safeSendValue(_receiver, _fee);
         } else {
             IBlockReward blockReward = blockRewardContract();
             blockReward.addExtraReceiver(_fee, _receiver);
