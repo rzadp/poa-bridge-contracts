@@ -42,7 +42,7 @@ contract BlockReward is EternalStorage {
     * @dev Return the allowed bridge addresses.
     * @return List of bridge contracts addresses.
     */
-    function bridgesAllowed() public pure returns (address payable [bridgesAllowedLength] memory) { // Question for review: Can this be payable?
+    function bridgesAllowed() public view returns (address payable [bridgesAllowedLength] memory) { // Question for review: Can this be payable?
         // These values must be changed before deploy
         return [address(0x0000000000000000000000000000000000000000)];
     }
