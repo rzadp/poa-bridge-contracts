@@ -41,7 +41,7 @@ contract ForeignBridgeErcToNative is BasicForeignBridge, ERC20Bridge, OtherSideB
         return 0x18762d46; // bytes4(keccak256(abi.encodePacked("erc-to-native-core")))
     }
 
-    function claimTokens(address _token, address _to) public {
+    function claimTokens(address _token, address payable _to) public {
         require(_token != address(erc20token()));
         // Chai token is not claimable if investing into Chai is enabled
         require(_token != address(chaiToken()) || !isChaiTokenEnabled());
