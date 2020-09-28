@@ -72,8 +72,8 @@ contract ForeignBridgeNativeToErc is
         return 0x92a8d7fe; // bytes4(keccak256(abi.encodePacked("native-to-erc-core")))
     }
 
-    function claimTokensFromErc677(address _token, address _to) external onlyIfUpgradeabilityOwner {
-        IBurnableMintableERC677Token(erc677token()).claimTokens(_token, _to);
+    function claimTokensFromErc677(address _token, address payable _to) external onlyIfUpgradeabilityOwner {
+        IBurnableMintableERC677Token(address(erc677token())).claimTokens(_token, _to);
     }
 
     function _initialize(
@@ -114,7 +114,7 @@ contract ForeignBridgeNativeToErc is
                 valueToMint = valueToMint.sub(fee);
             }
         }
-        return IBurnableMintableERC677Token(erc677token()).mint(_recipient, valueToMint);
+        return IBurnableMintableERC677Token(address(erc677token())).mint(_recipient, valueToMint);
     }
 
     function fireEventOnTokenTransfer(address _from, uint256 _value) internal {
