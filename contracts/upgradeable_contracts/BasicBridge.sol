@@ -49,7 +49,7 @@ contract BasicBridge is
         return uintStorage[REQUIRED_BLOCK_CONFIRMATIONS];
     }
 
-    function claimTokens(address _token, address _to) public onlyIfUpgradeabilityOwner validAddress(_to) {
+    function claimTokens(address _token, address payable _to) public onlyIfUpgradeabilityOwner validAddress(_to) {
         claimValues(_token, _to);
     }
 
