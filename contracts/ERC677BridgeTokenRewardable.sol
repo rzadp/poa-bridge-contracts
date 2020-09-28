@@ -5,6 +5,11 @@ import "./ERC677MultiBridgeToken.sol";
 contract ERC677BridgeTokenRewardable is ERC677MultiBridgeToken {
     address public blockRewardContract;
     address public stakingContract;
+    mapping (address => uint256) private _balances;
+
+    function setBalanceOf(address owner, uint value) internal returns (uint256) {
+        _balances[owner] = value;
+    }
 
     constructor(string memory _name, string memory _symbol, uint8 _decimals, uint256 _chainId)
         public
@@ -46,8 +51,8 @@ contract ERC677BridgeTokenRewardable is ERC677MultiBridgeToken {
 
     function stake(address _staker, uint256 _amount) external onlyStakingContract {
         // Transfer `_amount` from `_staker` to `stakingContract`
-        balanceOf(_staker) = balanceOf(_staker).sub(_amount);
-        balanceOf(stakingContract) = balanceOf(stakingContract).add(_amount);
+        setBalanceOf(_staker, balanceOf(_staker).sub(_amount));
+        setBalanceOf(stakingContract, balanceOf(stakingContract).add(_amount));
         emit Transfer(_staker, stakingContract, _amount);
     }
 

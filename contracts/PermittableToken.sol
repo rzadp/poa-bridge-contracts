@@ -12,7 +12,7 @@ contract PermittableToken is ERC677BridgeToken {
 
     mapping(address => uint256) public nonces;
     mapping(address => mapping(address => uint256)) public expirations;
-    mapping (address => mapping (address => uint256)) internal _allowed;
+    mapping (address => mapping (address => uint256)) private _allowed;
 
     function setAllowance(address owner, address spender, uint value) internal returns (uint256) {
         _allowed[owner][spender] = value;
