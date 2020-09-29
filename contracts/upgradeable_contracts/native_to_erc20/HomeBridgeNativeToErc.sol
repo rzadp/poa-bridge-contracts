@@ -120,7 +120,7 @@ contract HomeBridgeNativeToErc is EternalStorage, BasicHomeBridge, RewardableHom
         }
     }
 
-    function onExecuteAffirmation(address _recipient, uint256 _value, bytes32 txHash) internal returns (bool) {
+    function onExecuteAffirmation(address payable _recipient, uint256 _value, bytes32 txHash) internal returns (bool) {
         addTotalExecutedPerDay(getCurrentDay(), _value);
         uint256 valueToTransfer = _shiftValue(_value);
 
