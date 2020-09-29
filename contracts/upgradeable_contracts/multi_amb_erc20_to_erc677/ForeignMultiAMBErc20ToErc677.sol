@@ -117,7 +117,9 @@ contract ForeignMultiAMBErc20ToErc677 is BasicMultiAMBErc20ToErc677 {
      * @param _value requsted amount of bridged tokens
      * @param _data alternative receiver, if specified
      */
-    function bridgeSpecificActionsOnTokenTransfer(ERC677 _token, address _from, uint256 _value, bytes memory _data) internal {
+    function bridgeSpecificActionsOnTokenTransfer(ERC677 _token, address _from, uint256 _value, bytes memory _data)
+        internal
+    {
         if (lock()) return;
 
         address _tokenAddress = address(_token);

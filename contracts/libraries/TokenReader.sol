@@ -36,27 +36,32 @@ library TokenReader {
         }
         string memory res = new string(size);
         assembly {
-
             switch gt(returndatasize, 32)
-            case 1 {
-                // load as string
-                returndatacopy(add(res, 32), 64, size)
-            }
-            case 0 {
-                /* solhint-disable */
-                if gt(returndatasize, 0) {
-                    let i := 0
-                    ptr := mload(ptr) // load bytes32 value
-                    mstore(add(res, 32), ptr) // save value in result string
-
-                    for { } gt(ptr, 0) { i := add(i, 1) } { // until string is empty
-                        ptr := shl(8, ptr) // shift left by one symbol
-                    }
-                    mstore(res, i) // save result string length
+                case 1 {
+                    // load as string
+                    returndatacopy(add(res, 32), 64, size)
                 }
-            }
+                case 0 {
+                    /* solhint-disable */
+                    if gt(returndatasize, 0) {
+                        let i := 0
+                        ptr := mload(ptr) // load bytes32 value
+                        mstore(add(res, 32), ptr) // save value in result string
+
+                        for {
+
+                        } gt(ptr, 0) {
+                            i := add(i, 1)
+                        } {
+                            // until string is empty
+                            ptr := shl(8, ptr) // shift left by one symbol
+                        }
+                        mstore(res, i) // save result string length
+                    }
+                }
 
             /* solhint-enable */
+
         }
         return res;
     }
@@ -93,25 +98,31 @@ library TokenReader {
         string memory res = new string(size);
         assembly {
             switch gt(returndatasize, 32)
-            case 1 {
-                // load as string
-                returndatacopy(add(res, 32), 64, size)
-            }
-            case 0 {
-                /* solhint-disable */
-                if gt(returndatasize, 0) {
-                    let i := 0
-                    ptr := mload(ptr) // load bytes32 value
-                    mstore(add(res, 32), ptr) // save value in result string
-
-                    for { } gt(ptr, 0) { i := add(i, 1) } { // until string is empty
-                        ptr := shl(8, ptr) // shift left by one symbol
-                    }
-                    mstore(res, i) // save result string length
+                case 1 {
+                    // load as string
+                    returndatacopy(add(res, 32), 64, size)
                 }
-            }
+                case 0 {
+                    /* solhint-disable */
+                    if gt(returndatasize, 0) {
+                        let i := 0
+                        ptr := mload(ptr) // load bytes32 value
+                        mstore(add(res, 32), ptr) // save value in result string
+
+                        for {
+
+                        } gt(ptr, 0) {
+                            i := add(i, 1)
+                        } {
+                            // until string is empty
+                            ptr := shl(8, ptr) // shift left by one symbol
+                        }
+                        mstore(res, i) // save result string length
+                    }
+                }
 
             /* solhint-enable */
+
         }
         return res;
     }

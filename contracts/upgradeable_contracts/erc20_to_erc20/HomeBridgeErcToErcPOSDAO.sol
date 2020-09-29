@@ -61,7 +61,7 @@ contract HomeBridgeErcToErcPOSDAO is HomeBridgeErcToErc {
     }
 
     function _setBlockRewardContract(address _feeManager, address _blockReward) internal {
-        (bool condition,) = _feeManager.delegatecall(abi.encodeWithSelector(SET_BLOCK_REWARD_CONTRACT, _blockReward));
+        (bool condition, ) = _feeManager.delegatecall(abi.encodeWithSelector(SET_BLOCK_REWARD_CONTRACT, _blockReward));
         require(condition);
     }
 }

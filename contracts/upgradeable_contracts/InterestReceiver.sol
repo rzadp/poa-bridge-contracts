@@ -89,7 +89,7 @@ contract InterestReceiver is ERC677Receiver, Ownable, Claimable, TokenSwapper {
         }
 
         daiToken().approve(address(bridgeContract), finalDaiBalance);
-        (bool condition,) = bridgeContract.call(abi.encodeWithSelector(RELAY_TOKENS, receiverInXDai, finalDaiBalance));
+        (bool condition, ) = bridgeContract.call(abi.encodeWithSelector(RELAY_TOKENS, receiverInXDai, finalDaiBalance));
         if (!condition) {
             daiToken().approve(address(bridgeContract), 0);
             emit RelayTokensFailed(receiverInXDai, finalDaiBalance);

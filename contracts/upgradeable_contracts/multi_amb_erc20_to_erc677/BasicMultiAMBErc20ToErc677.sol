@@ -87,5 +87,6 @@ contract BasicMultiAMBErc20ToErc677 is
     function _relayTokens(ERC677 token, address _receiver, uint256 _value) internal;
 
     /* solcov ignore next */
-    function bridgeSpecificActionsOnTokenTransfer(ERC677 _token, address _from, uint256 _value, bytes memory _data) internal;
+    function bridgeSpecificActionsOnTokenTransfer(ERC677 _token, address _from, uint256 _value, bytes memory _data)
+        internal;
 }

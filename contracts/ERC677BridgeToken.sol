@@ -12,14 +12,24 @@ import "./upgradeable_contracts/Claimable.sol";
 * @title ERC677BridgeToken
 * @dev The basic implementation of a bridgeable ERC677-compatible token
 */
-contract ERC677BridgeToken is IBurnableMintableERC677Token, ERC20Detailed, ERC20Burnable, ERC20Mintable, Claimable, Ownable {
+contract ERC677BridgeToken is
+    IBurnableMintableERC677Token,
+    ERC20Detailed,
+    ERC20Burnable,
+    ERC20Mintable,
+    Claimable,
+    Ownable
+{
     bytes4 internal constant ON_TOKEN_TRANSFER = 0xa4c0ed36; // onTokenTransfer(address,uint256,bytes)
 
     address internal bridgeContractAddr;
 
     event ContractFallbackCallFailed(address from, address to, uint256 value);
 
-    constructor(string memory _name, string memory _symbol, uint8 _decimals) public ERC20Detailed(_name, _symbol, _decimals) {
+    constructor(string memory _name, string memory _symbol, uint8 _decimals)
+        public
+        ERC20Detailed(_name, _symbol, _decimals)
+    {
         // solhint-disable-previous-line no-empty-blocks
     }
 
@@ -38,7 +48,11 @@ contract ERC677BridgeToken is IBurnableMintableERC677Token, ERC20Detailed, ERC20
         _;
     }
 
-    function transferAndCall(address _to, uint256 _value, bytes calldata _data) external validRecipient(_to) returns (bool) {
+    function transferAndCall(address _to, uint256 _value, bytes calldata _data)
+        external
+        validRecipient(_to)
+        returns (bool)
+    {
         require(superTransfer(_to, _value));
         emit Transfer(msg.sender, _to, _value, _data);
 

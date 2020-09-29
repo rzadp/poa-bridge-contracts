@@ -121,16 +121,24 @@ contract TokenReaderTest {
     function test5() external {
         address token = address(new Token5());
 
-        require(keccak256(abi.encodePacked(TokenReader.readName(token))) == keccak256("0123456789abcdef0123456789abcdef"));
-        require(keccak256(abi.encodePacked(TokenReader.readSymbol(token))) == keccak256("0123456789abcdef0123456789abcdef"));
+        require(
+            keccak256(abi.encodePacked(TokenReader.readName(token))) == keccak256("0123456789abcdef0123456789abcdef")
+        );
+        require(
+            keccak256(abi.encodePacked(TokenReader.readSymbol(token))) == keccak256("0123456789abcdef0123456789abcdef")
+        );
         require(TokenReader.readDecimals(token) == 0);
     }
 
     function test6() external {
         address token = address(new Token6());
 
-        require(keccak256(abi.encodePacked(TokenReader.readName(token))) == keccak256("0123456789abcdef0123456789abcdefX"));
-        require(keccak256(abi.encodePacked(TokenReader.readSymbol(token))) == keccak256("0123456789abcdef0123456789abcdefY"));
+        require(
+            keccak256(abi.encodePacked(TokenReader.readName(token))) == keccak256("0123456789abcdef0123456789abcdefX")
+        );
+        require(
+            keccak256(abi.encodePacked(TokenReader.readSymbol(token))) == keccak256("0123456789abcdef0123456789abcdefY")
+        );
         require(TokenReader.readDecimals(token) == 0);
     }
 

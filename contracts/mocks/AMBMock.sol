@@ -20,9 +20,13 @@ contract AMBMock {
         maxGasPerTx = _value;
     }
 
-    function executeMessageCall(address _contract, address _sender, bytes memory _data, bytes32 _messageId, uint256 _gas)
-        public
-    {
+    function executeMessageCall(
+        address _contract,
+        address _sender,
+        bytes memory _data,
+        bytes32 _messageId,
+        uint256 _gas
+    ) public {
         messageSender = _sender;
         messageId = _messageId;
         transactionHash = _messageId;

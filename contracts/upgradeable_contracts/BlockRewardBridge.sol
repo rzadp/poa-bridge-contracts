@@ -21,9 +21,10 @@ contract BlockRewardBridge is EternalStorage {
         bool isBlockRewardContract = false;
 
         (bool condition, ) = _blockReward.call(abi.encode(BLOCK_REWARD_CONTRACT_ID));
-          
+
         if (condition) {
-            isBlockRewardContract = IBlockReward(_blockReward).blockRewardContractId() == bytes4(keccak256("blockReward"));
+            isBlockRewardContract =
+                IBlockReward(_blockReward).blockRewardContractId() == bytes4(keccak256("blockReward"));
         } else {
             (condition, ) = _blockReward.call(abi.encode(BRIDGES_ALLOWED_LENGTH));
             if (condition) {

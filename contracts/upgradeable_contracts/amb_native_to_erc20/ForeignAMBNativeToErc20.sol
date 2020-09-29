@@ -141,7 +141,9 @@ contract ForeignAMBNativeToErc20 is BasicAMBNativeToErc20, ReentrancyGuard, Base
     * @param _data this parameter could contain the address of an alternative receiver of the native tokens on the other
     * network, otherwise it will be empty.
     */
-    function bridgeSpecificActionsOnTokenTransfer(ERC677 _token, address _from, uint256 _value, bytes memory _data) internal {
+    function bridgeSpecificActionsOnTokenTransfer(ERC677 _token, address _from, uint256 _value, bytes memory _data)
+        internal
+    {
         if (!lock()) {
             IBurnableMintableERC677Token(address(_token)).burn(_value);
             passMessage(_from, chooseReceiver(_from, _data), _value);

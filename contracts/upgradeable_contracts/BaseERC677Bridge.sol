@@ -27,5 +27,6 @@ contract BaseERC677Bridge is BasicTokenBridge, ERC677Receiver, ERC677Storage, Ch
     }
 
     /* solcov ignore next */
-    function bridgeSpecificActionsOnTokenTransfer(ERC677 _token, address _from, uint256 _value, bytes memory _data) internal;
+    function bridgeSpecificActionsOnTokenTransfer(ERC677 _token, address _from, uint256 _value, bytes memory _data)
+        internal;
 }

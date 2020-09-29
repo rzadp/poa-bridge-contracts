@@ -70,7 +70,7 @@ contract VatMock {
     uint256 public live; // Access Flag
 
     // --- Logs ---
-    event LogNote(bytes4 indexed sig, bytes32 indexed arg1, bytes32 indexed arg2, bytes32 indexed arg3, bytes data) anonymous;
+    event LogNote(bytes4 indexed sig, bytes32 indexed arg1, bytes32 indexed arg2, bytes32 indexed arg3, bytes data);
 
     modifier note {
         _;

@@ -1,7 +1,7 @@
 pragma solidity ^0.5.0;
 
 import "../../interfaces/IBlockReward.sol";
-import {Address as PoaAddress} from "../../libraries/Address.sol";
+import { Address as PoaAddress } from "../../libraries/Address.sol";
 import "../ValidatorsFeeManager.sol";
 import "../BlockRewardBridge.sol";
 

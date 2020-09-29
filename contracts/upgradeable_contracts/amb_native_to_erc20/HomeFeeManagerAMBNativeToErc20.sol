@@ -1,6 +1,6 @@
 pragma solidity ^0.5.0;
 
-import {Address as PoaAddress} from "../../libraries/Address.sol";
+import { Address as PoaAddress } from "../../libraries/Address.sol";
 import "../BaseMediatorFeeManager.sol";
 
 /**

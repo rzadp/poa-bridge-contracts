@@ -1,8 +1,8 @@
 pragma solidity ^0.5.0;
 
-import {BasicAMBErc20ToNative} from "./BasicAMBErc20ToNative.sol";
-import {BaseERC677Bridge} from "../BaseERC677Bridge.sol";
-import {ReentrancyGuard} from "../ReentrancyGuard.sol";
+import { BasicAMBErc20ToNative } from "./BasicAMBErc20ToNative.sol";
+import { BaseERC677Bridge } from "../BaseERC677Bridge.sol";
+import { ReentrancyGuard } from "../ReentrancyGuard.sol";
 import "../../libraries/SafeERC20.sol";
 
 /**

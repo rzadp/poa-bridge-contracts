@@ -67,10 +67,7 @@ contract RewardableBridge is Ownable, FeeTypes {
         require(condition);
     }
 
-    function calculateFee(uint256 _value, bool _recover, address _impl, bytes32 _feeType)
-        internal
-        returns (uint256)
-    {
+    function calculateFee(uint256 _value, bool _recover, address _impl, bytes32 _feeType) internal returns (uint256) {
         uint256 fee;
         bytes memory callData = abi.encodeWithSelector(CALCULATE_FEE, _value, _recover, _feeType);
         assembly {

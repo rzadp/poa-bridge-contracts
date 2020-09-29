@@ -105,7 +105,9 @@ contract HomeMultiAMBErc20ToErc677 is BasicMultiAMBErc20ToErc677, HomeFeeManager
             symbol = name;
         }
         name = string(abi.encodePacked(name, " on xDai"));
-        address homeToken = address(new TokenProxy(tokenImage(), name, symbol, _decimals, bridgeContract().sourceChainId()));
+        address homeToken = address(
+            new TokenProxy(tokenImage(), name, symbol, _decimals, bridgeContract().sourceChainId())
+        );
         _setTokenAddressPair(_token, homeToken);
         _initializeTokenBridgeLimits(homeToken, _decimals);
         _setFee(HOME_TO_FOREIGN_FEE, homeToken, getFee(HOME_TO_FOREIGN_FEE, address(0)));
@@ -245,7 +247,9 @@ contract HomeMultiAMBErc20ToErc677 is BasicMultiAMBErc20ToErc677, HomeFeeManager
      * @param _value requsted amount of bridged tokens
      * @param _data alternative receiver, if specified
      */
-    function bridgeSpecificActionsOnTokenTransfer(ERC677 _token, address _from, uint256 _value, bytes memory _data) internal {
+    function bridgeSpecificActionsOnTokenTransfer(ERC677 _token, address _from, uint256 _value, bytes memory _data)
+        internal
+    {
         if (!lock()) {
             bytes32 _messageId = messageId();
             uint256 valueToBridge = _value;

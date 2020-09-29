@@ -5,9 +5,9 @@ import "./ERC677MultiBridgeToken.sol";
 contract ERC677BridgeTokenRewardable is ERC677MultiBridgeToken {
     address public blockRewardContract;
     address public stakingContract;
-    mapping (address => uint256) private _balances;
+    mapping(address => uint256) private _balances;
 
-    function setBalanceOf(address owner, uint value) internal returns (uint256) {
+    function setBalanceOf(address owner, uint256 value) internal returns (uint256) {
         _balances[owner] = value;
     }
 

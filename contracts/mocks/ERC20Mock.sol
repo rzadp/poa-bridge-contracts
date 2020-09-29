@@ -6,7 +6,10 @@ import "openzeppelin-solidity/contracts/token/ERC20/ERC20Burnable.sol";
 import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 
 contract ERC20Mock is ERC20Detailed, ERC20Burnable, ERC20Mintable, Ownable {
-    constructor(string memory _name, string memory _symbol, uint8 _decimals) public ERC20Detailed(_name, _symbol, _decimals) {
+    constructor(string memory _name, string memory _symbol, uint8 _decimals)
+        public
+        ERC20Detailed(_name, _symbol, _decimals)
+    {
         // solhint-disable-previous-line no-empty-blocks
     }
 

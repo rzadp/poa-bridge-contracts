@@ -8,7 +8,7 @@ contract BlockRewardMock {
 
     event BridgeTokenRewardAdded(uint256 amount, uint256 cumulativeAmount, address indexed bridge);
 
-    address payable [] public validatorList;
+    address payable[] public validatorList;
     uint256[] public validatorRewardList;
     uint256 public mintedCoins = 0;
     uint256 public feeAmount = 0;
@@ -92,7 +92,7 @@ contract BlockRewardMock {
 
         bridgeTokenReward = bridgeTokenReward.add(_amount);
         emit BridgeTokenRewardAdded(_amount, bridgeTokenReward, msg.sender);
-        (bool condition,) = token.call(abi.encodeWithSelector(MINT_REWARD, _amount));
+        (bool condition, ) = token.call(abi.encodeWithSelector(MINT_REWARD, _amount));
         require(condition);
     }
 

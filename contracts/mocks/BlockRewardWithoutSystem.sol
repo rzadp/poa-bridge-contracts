@@ -17,7 +17,7 @@ contract BlockRewardWithoutSystem is BlockReward {
         bridgeContractAddress = _addr;
     }
 
-    function bridgesAllowed() public view returns (address payable [bridgesAllowedLength] memory) {
+    function bridgesAllowed() public view returns (address payable[bridgesAllowedLength] memory) {
         // These values must be changed before deploy
         return [address(bridgeContractAddress)];
     }

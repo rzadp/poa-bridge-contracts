@@ -194,7 +194,7 @@ contract MessageProcessor is EternalStorage {
         setMessageSender(_sender);
         setMessageId(_messageId);
         setMessageSourceChainId(_sourceChainId);
-        (bool status,) = _contract.call.gas(_gas)(_data);
+        (bool status, ) = _contract.call.gas(_gas)(_data);
         setMessageSender(address(0));
         setMessageId(bytes32(0));
         setMessageSourceChainId(0);
