@@ -13,15 +13,15 @@ contract RewardableHomeBridgeErcToNative is RewardableBridge {
         _setFee(feeManagerContract(), _fee, FOREIGN_FEE);
     }
 
-    function getHomeFee() public view returns (uint256) {
+    function getHomeFee() public returns (uint256) {
         return _getFee(HOME_FEE);
     }
 
-    function getForeignFee() public view returns (uint256) {
+    function getForeignFee() public returns (uint256) {
         return _getFee(FOREIGN_FEE);
     }
 
-    function getAmountToBurn(uint256 _value) public view returns (uint256) {
+    function getAmountToBurn(uint256 _value) public returns (uint256) {
         uint256 amount;
         bytes memory callData = abi.encodeWithSelector(GET_AMOUNT_TO_BURN, _value);
         address feeManager = feeManagerContract();
