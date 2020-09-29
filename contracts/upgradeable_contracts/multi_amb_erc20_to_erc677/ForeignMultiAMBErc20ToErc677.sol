@@ -83,7 +83,7 @@ contract ForeignMultiAMBErc20ToErc677 is BasicMultiAMBErc20ToErc677 {
     * @param _value amount of tokens to be received.
     */
     function handleBridgedTokens(ERC677 _token, address _recipient, uint256 _value) external onlyMediator {
-        require(isTokenRegistered(_token));
+        require(isTokenRegistered(address(_token)));
         _handleBridgedTokens(_token, _recipient, _value);
     }
 
@@ -102,7 +102,10 @@ contract ForeignMultiAMBErc20ToErc677 is BasicMultiAMBErc20ToErc677 {
         require(!lock());
 
         setLock(true);
-        token.safeTransferFrom(msg.sender, _value);
+        //Check this workaround
+        // token.safeTransferFrom(msg.sender, _value);
+        SafeERC20.safeTransferFrom(address(token), msg.sender, _value);
+
         setLock(false);
         bridgeSpecificActionsOnTokenTransfer(token, msg.sender, _value, abi.encodePacked(_receiver));
     }
@@ -117,20 +120,22 @@ contract ForeignMultiAMBErc20ToErc677 is BasicMultiAMBErc20ToErc677 {
     function bridgeSpecificActionsOnTokenTransfer(ERC677 _token, address _from, uint256 _value, bytes memory _data) internal {
         if (lock()) return;
 
-        bool isKnownToken = isTokenRegistered(_token);
+        address _tokenAddress = address(_token);
 
-        string memory name = TokenReader.readName(_token);
-        string memory symbol = TokenReader.readSymbol(_token);
-        uint8 decimals = uint8(TokenReader.readDecimals(_token));
+        bool isKnownToken = isTokenRegistered(_tokenAddress);
+
+        string memory name = TokenReader.readName(_tokenAddress);
+        string memory symbol = TokenReader.readSymbol(_tokenAddress);
+        uint8 decimals = uint8(TokenReader.readDecimals(_tokenAddress));
 
         if (!isKnownToken) {
             require(bytes(name).length > 0 || bytes(symbol).length > 0);
 
-            _initializeTokenBridgeLimits(_token, decimals);
+            _initializeTokenBridgeLimits(_tokenAddress, decimals);
         }
 
-        require(withinLimit(_token, _value));
-        addTotalSpentPerDay(_token, getCurrentDay(), _value);
+        require(withinLimit(_tokenAddress, _value));
+        addTotalSpentPerDay(_tokenAddress, getCurrentDay(), _value);
 
         bytes memory data;
         address receiver = chooseReceiver(_from, _data);
@@ -139,7 +144,7 @@ contract ForeignMultiAMBErc20ToErc677 is BasicMultiAMBErc20ToErc677 {
             data = abi.encodeWithSelector(this.handleBridgedTokens.selector, _token, receiver, _value);
         } else {
             data = abi.encodeWithSelector(
-                HomeMultiAMBErc20ToErc677(this).deployAndHandleBridgedTokens.selector,
+                HomeMultiAMBErc20ToErc677(address(this)).deployAndHandleBridgedTokens.selector,
                 _token,
                 name,
                 symbol,
@@ -149,7 +154,7 @@ contract ForeignMultiAMBErc20ToErc677 is BasicMultiAMBErc20ToErc677 {
             );
         }
 
-        _setMediatorBalance(_token, mediatorBalance(_token).add(_value));
+        _setMediatorBalance(_tokenAddress, mediatorBalance(_tokenAddress).add(_value));
 
         bytes32 _messageId = bridgeContract().requireToPassMessage(
             mediatorContractOnOtherSide(),
@@ -157,12 +162,12 @@ contract ForeignMultiAMBErc20ToErc677 is BasicMultiAMBErc20ToErc677 {
             requestGasLimit()
         );
 
-        setMessageToken(_messageId, _token);
+        setMessageToken(_messageId, _tokenAddress);
         setMessageValue(_messageId, _value);
         setMessageRecipient(_messageId, _from);
 
         if (!isKnownToken) {
-            _setTokenRegistrationMessageId(_token, _messageId);
+            _setTokenRegistrationMessageId(_tokenAddress, _messageId);
         }
     }
 
