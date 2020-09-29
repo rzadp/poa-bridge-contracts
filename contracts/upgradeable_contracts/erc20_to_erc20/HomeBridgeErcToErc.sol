@@ -121,8 +121,8 @@ contract HomeBridgeErcToErc is
         setErc677token(_erc677token);
     }
 
-    function claimTokensFromErc677(address _token, address _to) external onlyIfUpgradeabilityOwner {
-        IBurnableMintableERC677Token(erc677token()).claimTokens(_token, _to);
+    function claimTokensFromErc677(address _token, address payable _to) external onlyIfUpgradeabilityOwner {
+        IBurnableMintableERC677Token(address(erc677token())).claimTokens(_token, _to);
     }
 
     function getBridgeMode() external pure returns (bytes4 _data) {
@@ -138,7 +138,7 @@ contract HomeBridgeErcToErc is
             distributeFeeFromAffirmation(fee, feeManager, txHash);
             valueToMint = valueToMint.sub(fee);
         }
-        return IBurnableMintableERC677Token(erc677token()).mint(_recipient, valueToMint);
+        return IBurnableMintableERC677Token(address(erc677token())).mint(_recipient, valueToMint);
     }
 
     function fireEventOnTokenTransfer(address _from, uint256 _value) internal {
