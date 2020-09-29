@@ -37,7 +37,7 @@ contract HomeBridgeErcToErcPOSDAO is HomeBridgeErcToErc {
         return isInitialized();
     }
 
-    function blockRewardContract() public view returns (address) {
+    function blockRewardContract() public returns (address) {
         address blockReward;
         address feeManager = feeManagerContract();
         bytes memory callData = abi.encodeWithSelector(BLOCK_REWARD_CONTRACT_SELECTOR);
@@ -61,6 +61,7 @@ contract HomeBridgeErcToErcPOSDAO is HomeBridgeErcToErc {
     }
 
     function _setBlockRewardContract(address _feeManager, address _blockReward) internal {
-        require(_feeManager.delegatecall(abi.encodeWithSelector(SET_BLOCK_REWARD_CONTRACT, _blockReward)));
+        (bool condition,) = _feeManager.delegatecall(abi.encodeWithSelector(SET_BLOCK_REWARD_CONTRACT, _blockReward));
+        require(condition);
     }
 }

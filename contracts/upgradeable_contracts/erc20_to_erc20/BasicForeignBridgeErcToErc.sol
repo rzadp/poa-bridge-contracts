@@ -35,7 +35,7 @@ contract BasicForeignBridgeErcToErc is BasicForeignBridge {
         return 0xba4690f5; // bytes4(keccak256(abi.encodePacked("erc-to-erc-core")))
     }
 
-    function claimTokens(address _token, address _to) public {
+    function claimTokens(address _token, address payable _to) public {
         require(_token != address(erc20token()));
         super.claimTokens(_token, _to);
     }
