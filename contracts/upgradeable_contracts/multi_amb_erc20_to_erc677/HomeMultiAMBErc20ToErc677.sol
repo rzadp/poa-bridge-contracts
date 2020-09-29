@@ -105,7 +105,7 @@ contract HomeMultiAMBErc20ToErc677 is BasicMultiAMBErc20ToErc677, HomeFeeManager
             symbol = name;
         }
         name = string(abi.encodePacked(name, " on xDai"));
-        address homeToken = new TokenProxy(tokenImage(), name, symbol, _decimals, bridgeContract().sourceChainId());
+        address homeToken = address(new TokenProxy(tokenImage(), name, symbol, _decimals, bridgeContract().sourceChainId()));
         _setTokenAddressPair(_token, homeToken);
         _initializeTokenBridgeLimits(homeToken, _decimals);
         _setFee(HOME_TO_FOREIGN_FEE, homeToken, getFee(HOME_TO_FOREIGN_FEE, address(0)));
@@ -123,8 +123,8 @@ contract HomeMultiAMBErc20ToErc677 is BasicMultiAMBErc20ToErc677, HomeFeeManager
     * @param _value amount of tokens to be received.
     */
     function handleBridgedTokens(ERC677 _token, address _recipient, uint256 _value) external onlyMediator {
-        ERC677 homeToken = ERC677(homeTokenAddress(_token));
-        require(isTokenRegistered(homeToken));
+        ERC677 homeToken = ERC677(homeTokenAddress(address(_token)));
+        require(isTokenRegistered(address(homeToken)));
         _handleBridgedTokens(homeToken, _recipient, _value);
     }
 
@@ -141,8 +141,8 @@ contract HomeMultiAMBErc20ToErc677 is BasicMultiAMBErc20ToErc677, HomeFeeManager
             // if msg.sender if not a valid token contract, this check will fail, since limits are zeros
             // so the following check is not needed
             // require(isTokenRegistered(token));
-            require(withinLimit(token, _value));
-            addTotalSpentPerDay(token, getCurrentDay(), _value);
+            require(withinLimit(address(token), _value));
+            addTotalSpentPerDay(address(token), getCurrentDay(), _value);
             bridgeSpecificActionsOnTokenTransfer(token, _from, _value, _data);
         }
         return true;
@@ -165,8 +165,8 @@ contract HomeMultiAMBErc20ToErc677 is BasicMultiAMBErc20ToErc677, HomeFeeManager
         // if msg.sender if not a valid token contract, this check will fail, since limits are zeros
         // so the following check is not needed
         // require(isTokenRegistered(token));
-        require(withinLimit(token, _value));
-        addTotalSpentPerDay(token, getCurrentDay(), _value);
+        require(withinLimit(address(token), _value));
+        addTotalSpentPerDay(address(token), getCurrentDay(), _value);
 
         setLock(true);
         token.transferFrom(msg.sender, to, _value);
@@ -249,12 +249,13 @@ contract HomeMultiAMBErc20ToErc677 is BasicMultiAMBErc20ToErc677, HomeFeeManager
         if (!lock()) {
             bytes32 _messageId = messageId();
             uint256 valueToBridge = _value;
-            uint256 fee = _distributeFee(HOME_TO_FOREIGN_FEE, _token, valueToBridge);
+            address _tokenAddress = address(_token);
+            uint256 fee = _distributeFee(HOME_TO_FOREIGN_FEE, _tokenAddress, valueToBridge);
             if (fee > 0) {
-                emit FeeDistributed(fee, _token, _messageId);
+                emit FeeDistributed(fee, _tokenAddress, _messageId);
                 valueToBridge = valueToBridge.sub(fee);
             }
-            IBurnableMintableERC677Token(_token).burn(valueToBridge);
+            IBurnableMintableERC677Token(_tokenAddress).burn(valueToBridge);
             passMessage(_token, _from, chooseReceiver(_from, _data), valueToBridge);
         }
     }
@@ -270,7 +271,7 @@ contract HomeMultiAMBErc20ToErc677 is BasicMultiAMBErc20ToErc677, HomeFeeManager
     */
     function passMessage(ERC677 _token, address _from, address _receiver, uint256 _value) internal {
         bytes4 methodSelector = this.handleBridgedTokens.selector;
-        address foreignToken = foreignTokenAddress(_token);
+        address foreignToken = foreignTokenAddress(address(_token));
         bytes memory data = abi.encodeWithSelector(methodSelector, foreignToken, _receiver, _value);
 
         bytes32 _messageId = bridgeContract().requireToPassMessage(
@@ -279,7 +280,7 @@ contract HomeMultiAMBErc20ToErc677 is BasicMultiAMBErc20ToErc677, HomeFeeManager
             requestGasLimit()
         );
 
-        setMessageToken(_messageId, _token);
+        setMessageToken(_messageId, address(_token));
         setMessageValue(_messageId, _value);
         setMessageRecipient(_messageId, _from);
     }
