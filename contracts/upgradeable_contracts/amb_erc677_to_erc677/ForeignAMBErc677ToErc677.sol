@@ -19,7 +19,8 @@ contract ForeignAMBErc677ToErc677 is BasicAMBErc677ToErc677 {
     function executeActionOnBridgedTokens(address _recipient, uint256 _value) internal {
         uint256 value = _unshiftValue(_value);
         bytes32 _messageId = messageId();
-        erc677token().safeTransfer(_recipient, value);
+        // erc677token().safeTransfer(_recipient, value);
+        SafeERC20.safeTransfer(address(erc677token()), _recipient, value);
         emit TokensBridged(_recipient, value, _messageId);
     }
 
@@ -39,7 +40,8 @@ contract ForeignAMBErc677ToErc677 is BasicAMBErc677ToErc677 {
         addTotalSpentPerDay(getCurrentDay(), _value);
 
         setLock(true);
-        token.safeTransferFrom(msg.sender, _value);
+        // token.safeTransferFrom(msg.sender, _value);
+        SafeERC20.safeTransferFrom(address(token), msg.sender, _value);
         setLock(false);
         bridgeSpecificActionsOnTokenTransfer(token, msg.sender, _value, abi.encodePacked(_receiver));
     }
@@ -62,6 +64,7 @@ contract ForeignAMBErc677ToErc677 is BasicAMBErc677ToErc677 {
     }
 
     function executeActionOnFixedTokens(address _recipient, uint256 _value) internal {
-        erc677token().safeTransfer(_recipient, _value);
+        // erc677token().safeTransfer(_recipient, _value);
+        SafeERC20.safeTransfer(address(erc677token()), _recipient, _value);
     }
 }
