@@ -70,7 +70,7 @@ contract ForeignAMBNativeToErc20 is BasicAMBNativeToErc20, ReentrancyGuard, Base
 
         bytes32 _messageId = messageId();
         IMediatorFeeManager feeManager = feeManagerContract();
-        if (feeManager != address(0)) {
+        if (address(feeManager) != address(0)) {
             uint256 fee = feeManager.calculateFee(valueToMint);
             if (fee != 0) {
                 distributeFee(feeManager, fee, _messageId);
@@ -78,7 +78,7 @@ contract ForeignAMBNativeToErc20 is BasicAMBNativeToErc20, ReentrancyGuard, Base
             }
         }
 
-        IBurnableMintableERC677Token(erc677token()).mint(_receiver, valueToMint);
+        IBurnableMintableERC677Token(address(erc677token())).mint(_receiver, valueToMint);
         emit TokensBridged(_receiver, valueToMint, _messageId);
     }
 
@@ -88,7 +88,7 @@ contract ForeignAMBNativeToErc20 is BasicAMBNativeToErc20, ReentrancyGuard, Base
     * @param _value amount of tokens to be received
     */
     function executeActionOnFixedTokens(address _receiver, uint256 _value) internal {
-        IBurnableMintableERC677Token(erc677token()).mint(_receiver, _value);
+        IBurnableMintableERC677Token(address(erc677token())).mint(_receiver, _value);
     }
 
     /**
@@ -143,7 +143,7 @@ contract ForeignAMBNativeToErc20 is BasicAMBNativeToErc20, ReentrancyGuard, Base
     */
     function bridgeSpecificActionsOnTokenTransfer(ERC677 _token, address _from, uint256 _value, bytes memory _data) internal {
         if (!lock()) {
-            IBurnableMintableERC677Token(_token).burn(_value);
+            IBurnableMintableERC677Token(address(_token)).burn(_value);
             passMessage(_from, chooseReceiver(_from, _data), _value);
         }
     }
@@ -154,7 +154,7 @@ contract ForeignAMBNativeToErc20 is BasicAMBNativeToErc20, ReentrancyGuard, Base
     * @param _fee amount of tokens to be minted.
     */
     function onFeeDistribution(address _feeManager, uint256 _fee) internal {
-        IBurnableMintableERC677Token(erc677token()).mint(_feeManager, _fee);
+        IBurnableMintableERC677Token(address(erc677token())).mint(_feeManager, _fee);
     }
 
     /**
@@ -162,8 +162,8 @@ contract ForeignAMBNativeToErc20 is BasicAMBNativeToErc20, ReentrancyGuard, Base
     * @param _token address of the token, if it is not provided, native tokens will be transferred.
     * @param _to address that will receive the locked tokens on this contract.
     */
-    function claimTokensFromErc677(address _token, address _to) external onlyIfUpgradeabilityOwner {
-        IBurnableMintableERC677Token(erc677token()).claimTokens(_token, _to);
+    function claimTokensFromErc677(address _token, address payable _to) external onlyIfUpgradeabilityOwner {
+        IBurnableMintableERC677Token(address(erc677token())).claimTokens(_token, _to);
     }
 
     /**
