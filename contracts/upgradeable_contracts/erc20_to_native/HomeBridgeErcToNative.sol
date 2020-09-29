@@ -148,7 +148,7 @@ contract HomeBridgeErcToNative is
     function onExecuteAffirmation(address _recipient, uint256 _value, bytes32 txHash) internal returns (bool) {
         addTotalExecutedPerDay(getCurrentDay(), _value);
         IBlockReward blockReward = blockRewardContract();
-        require(blockReward != address(0));
+        require(address(blockReward) != address(0));
         uint256 valueToMint = _shiftValue(_value);
         address feeManager = feeManagerContract();
         if (feeManager != address(0)) {
