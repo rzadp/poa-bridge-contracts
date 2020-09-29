@@ -78,8 +78,8 @@ contract ForeignAMBErc20ToNative is BasicAMBErc20ToNative, ReentrancyGuard, Base
         _setMediatorBalance(mediatorBalance().add(_value));
 
         setLock(true);
-        // SafeERC20.safeTransferFrom(address(token), msg.sender, _value);
-        token.safeTransferFrom(msg.sender, _value);
+        SafeERC20.safeTransferFrom(address(token), msg.sender, _value);
+        // token.safeTransferFrom(msg.sender, _value);
         setLock(false);
         bridgeSpecificActionsOnTokenTransfer(token, msg.sender, _value, abi.encodePacked(_receiver));
     }
@@ -153,7 +153,8 @@ contract ForeignAMBErc20ToNative is BasicAMBErc20ToNative, ReentrancyGuard, Base
         bytes32 _messageId = messageId();
 
         _setMediatorBalance(mediatorBalance().sub(valueToTransfer));
-        _erc677token().safeTransfer(_receiver, valueToTransfer);
+        // _erc677token().safeTransfer(_receiver, valueToTransfer);
+        SafeERC20.safeTransfer(address(_erc677token()), _receiver, valueToTransfer);
         emit TokensBridged(_receiver, valueToTransfer, _messageId);
     }
 
@@ -164,7 +165,8 @@ contract ForeignAMBErc20ToNative is BasicAMBErc20ToNative, ReentrancyGuard, Base
     */
     function executeActionOnFixedTokens(address _receiver, uint256 _value) internal {
         _setMediatorBalance(mediatorBalance().sub(_value));
-        _erc677token().safeTransfer(_receiver, _value);
+        // _erc677token().safeTransfer(_receiver, _value);
+        SafeERC20.safeTransfer(address(_erc677token()), _receiver, _value);
     }
 
     /**
