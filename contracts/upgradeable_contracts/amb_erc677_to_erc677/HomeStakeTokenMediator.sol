@@ -95,7 +95,7 @@ contract HomeStakeTokenMediator is BasicStakeTokenMediator, HomeStakeTokenFeeMan
      * @param _owner token proxy contract address
      */
     function transferTokenOwnership(address _owner) external onlyOwner {
-        Ownable(erc677token()).transferOwnership(_owner);
+        Ownable(address(erc677token())).transferOwnership(_owner);
     }
 
     /**
@@ -138,7 +138,7 @@ contract HomeStakeTokenMediator is BasicStakeTokenMediator, HomeStakeTokenFeeMan
     function bridgeSpecificActionsOnTokenTransfer(ERC677 _token, address _from, uint256 _value, bytes memory _data) internal {
         if (!lock()) {
             // burn all incoming tokens
-            IBurnableMintableERC677Token(_token).burn(_value);
+            IBurnableMintableERC677Token(address(_token)).burn(_value);
 
             if (isFeeCollectingActivated()) {
                 uint256 fee = calculateFee(_value);
