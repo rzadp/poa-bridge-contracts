@@ -83,13 +83,13 @@ contract HomeAMBNativeToErc20 is BasicAMBNativeToErc20 {
     * @param _receiver address that will receive the native tokens
     * @param _value amount of native tokens to be received
     */
-    function executeActionOnBridgedTokens(address _receiver, uint256 _value) internal {
+    function executeActionOnBridgedTokens(address payable _receiver, uint256 _value) internal {
         uint256 valueToTransfer = _shiftValue(_value);
         setMediatorBalance(mediatorBalance().sub(valueToTransfer));
 
         bytes32 _messageId = messageId();
         IMediatorFeeManager feeManager = feeManagerContract();
-        if (feeManager != address(0)) {
+        if (address(feeManager) != address(0)) {
             uint256 fee = feeManager.calculateFee(valueToTransfer);
             if (fee != 0) {
                 distributeFee(feeManager, fee, _messageId);
@@ -97,7 +97,7 @@ contract HomeAMBNativeToErc20 is BasicAMBNativeToErc20 {
             }
         }
 
-        Address.safeSendValue(_receiver, valueToTransfer);
+        PoaAddress.safeSendValue(_receiver, valueToTransfer);
         emit TokensBridged(_receiver, valueToTransfer, _messageId);
     }
 
@@ -106,9 +106,9 @@ contract HomeAMBNativeToErc20 is BasicAMBNativeToErc20 {
     * @param _receiver address that will receive the native tokens
     * @param _value amount of native tokens to be received
     */
-    function executeActionOnFixedTokens(address _receiver, uint256 _value) internal {
+    function executeActionOnFixedTokens(address payable _receiver, uint256 _value) internal {
         setMediatorBalance(mediatorBalance().sub(_value));
-        Address.safeSendValue(_receiver, _value);
+        PoaAddress.safeSendValue(_receiver, _value);
     }
 
     /**
@@ -116,8 +116,8 @@ contract HomeAMBNativeToErc20 is BasicAMBNativeToErc20 {
     * @param _feeManager address that will receive the native tokens.
     * @param _fee amount of native tokens to be distribute.
     */
-    function onFeeDistribution(address _feeManager, uint256 _fee) internal {
-        Address.safeSendValue(_feeManager, _fee);
+    function onFeeDistribution(address payable _feeManager, uint256 _fee) internal {
+        PoaAddress.safeSendValue(_feeManager, _fee);
     }
 
     /**
