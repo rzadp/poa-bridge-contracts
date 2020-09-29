@@ -142,7 +142,7 @@ contract HomeAMBNativeToErc20 is BasicAMBNativeToErc20 {
     * @param _token address of the token.
     * @param _to address that will receive the locked tokens on this contract.
     */
-    function claimTokens(address _token, address _to) public {
+    function claimTokens(address _token, address payable _to) public {
         require(_token != address(0));
         super.claimTokens(_token, _to);
     }
