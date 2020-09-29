@@ -11,11 +11,11 @@ contract RewardableHomeBridgeErcToErc is RewardableBridge {
         _setFee(feeManagerContract(), _fee, FOREIGN_FEE);
     }
 
-    function getHomeFee() public view returns (uint256) {
+    function getHomeFee() public returns (uint256) {
         return _getFee(HOME_FEE);
     }
 
-    function getForeignFee() public view returns (uint256) {
+    function getForeignFee() public returns (uint256) {
         return _getFee(FOREIGN_FEE);
     }
 }
