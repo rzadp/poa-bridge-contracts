@@ -1,8 +1,8 @@
 pragma solidity ^0.5.0;
 
-import "./BasicAMBErc20ToNative.sol";
-import "../BaseERC677Bridge.sol";
-import "../ReentrancyGuard.sol";
+import {BasicAMBErc20ToNative} from "./BasicAMBErc20ToNative.sol";
+import {BaseERC677Bridge} from "../BaseERC677Bridge.sol";
+import {ReentrancyGuard} from "../ReentrancyGuard.sol";
 import "../../libraries/SafeERC20.sol";
 
 /**
@@ -67,7 +67,7 @@ contract ForeignAMBErc20ToNative is BasicAMBErc20ToNative, ReentrancyGuard, Base
     * @param _receiver address that will receive the native tokens on the other network.
     * @param _value amount of tokens to be transferred to the other network.
     */
-    function relayTokens(address _receiver, uint256 _value) external {
+    function relayTokens(address _receiver, uint256 _value) internal {
         // This lock is to prevent calling passMessage twice.
         // When transferFrom is called, after the transfer, the ERC677 token will call onTokenTransfer from this contract
         // which will call passMessage.
@@ -78,6 +78,7 @@ contract ForeignAMBErc20ToNative is BasicAMBErc20ToNative, ReentrancyGuard, Base
         _setMediatorBalance(mediatorBalance().add(_value));
 
         setLock(true);
+        // SafeERC20.safeTransferFrom(address(token), msg.sender, _value);
         token.safeTransferFrom(msg.sender, _value);
         setLock(false);
         bridgeSpecificActionsOnTokenTransfer(token, msg.sender, _value, abi.encodePacked(_receiver));
@@ -109,7 +110,7 @@ contract ForeignAMBErc20ToNative is BasicAMBErc20ToNative, ReentrancyGuard, Base
     * @param _token address of the token, if it is not provided, native tokens will be transferred.
     * @param _to address that will receive the locked tokens on this contract.
     */
-    function claimTokens(address _token, address _to) public onlyIfUpgradeabilityOwner validAddress(_to) {
+    function claimTokens(address _token, address payable _to) public onlyIfUpgradeabilityOwner validAddress(_to) {
         require(_token != address(_erc677token()));
         claimValues(_token, _to);
     }

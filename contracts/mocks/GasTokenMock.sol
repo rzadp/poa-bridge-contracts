@@ -68,7 +68,7 @@ contract Rlp {
         assembly {
             let mem_start := mload(0x40)        // get a pointer to free memory
             mstore(mem_start, word)             // store the rlp encoding
-            hash := sha3(mem_start, add(tot_bytes, 1))     // hash the rlp encoding
+            hash := keccak256(mem_start, add(tot_bytes, 1))     // hash the rlp encoding
         }
 
         // interpret hash as address (20 least significant bytes)
