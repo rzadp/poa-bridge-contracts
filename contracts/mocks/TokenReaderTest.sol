@@ -4,83 +4,83 @@ pragma solidity ^0.5.0;
 import "../../contracts/libraries/TokenReader.sol";
 
 contract Token1 {
-    function name() external view returns (string memory) {
+    function name() external pure returns (string memory) {
         return "Token";
     }
 
-    function symbol() external view returns (string memory) {
+    function symbol() external pure returns (string memory) {
         return "TKN";
     }
 
-    function decimals() external view returns (uint8) {
+    function decimals() external pure returns (uint8) {
         return 18;
     }
 }
 
 contract Token2 {
-    function NAME() external view returns (string memory) {
+    function NAME() external pure returns (string memory) {
         return "Token";
     }
 
-    function SYMBOL() external view returns (string memory) {
+    function SYMBOL() external pure returns (string memory) {
         return "TKN";
     }
 
-    function DECIMALS() external view returns (uint8) {
+    function DECIMALS() external pure returns (uint8) {
         return 18;
     }
 }
 
 contract Token3 {
-    function name() external view returns (bytes32) {
+    function name() external pure returns (bytes32) {
         return bytes32("Token");
     }
 
-    function symbol() external view returns (bytes32) {
+    function symbol() external pure returns (bytes32) {
         return bytes32("TKN");
     }
 
-    function decimals() external view returns (uint256) {
+    function decimals() external pure returns (uint256) {
         return 9;
     }
 }
 
 contract Token4 {
-    function NAME() external view returns (bytes32) {
+    function NAME() external pure returns (bytes32) {
         return bytes32("Token");
     }
 
-    function SYMBOL() external view returns (bytes32) {
+    function SYMBOL() external pure returns (bytes32) {
         return bytes32("TKN");
     }
 }
 
 contract Token5 {
-    function name() external view returns (bytes32) {
+    function name() external pure returns (bytes32) {
         return bytes32("0123456789abcdef0123456789abcdef");
     }
 
-    function SYMBOL() external view returns (bytes32) {
+    function SYMBOL() external pure returns (bytes32) {
         return bytes32("0123456789abcdef0123456789abcdef");
     }
 }
 
 contract Token6 {
-    function NAME() external view returns (string memory) {
+    function NAME() external pure returns (string memory) {
         return "0123456789abcdef0123456789abcdefX";
     }
 
-    function symbol() external view returns (string memory) {
+    function symbol() external pure returns (string memory) {
         return "0123456789abcdef0123456789abcdefY";
     }
 }
 
 contract Token7 {
-    function symbol() external view returns (string memory) {
+    function symbol() external pure returns (string memory) {
         return "";
     }
 
-    function decimals() external view returns (uint8) {
+    function decimals() external pure returns (uint8) {
         return 0;
     }
 }
