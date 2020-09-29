@@ -1,7 +1,7 @@
 pragma solidity ^0.5.0;
 
 import "../../interfaces/IBurnableMintableERC677Token.sol";
-import "../../libraries/Address.sol";
+import {Address as PoaAddress} from "../../libraries/Address.sol";
 import "../ValidatorsFeeManager.sol";
 import "../ERC677Storage.sol";
 
@@ -14,8 +14,8 @@ contract FeeManagerNativeToErc is ValidatorsFeeManager, ERC677Storage {
         return IBurnableMintableERC677Token(addressStorage[ERC677_TOKEN]);
     }
 
-    function onAffirmationFeeDistribution(address _rewardAddress, uint256 _fee) internal {
-        Address.safeSendValue(_rewardAddress, _fee);
+    function onAffirmationFeeDistribution(address payable _rewardAddress, uint256 _fee) internal {
+        PoaAddress.safeSendValue(_rewardAddress, _fee);
     }
 
     function onSignatureFeeDistribution(address _rewardAddress, uint256 _fee) internal {
