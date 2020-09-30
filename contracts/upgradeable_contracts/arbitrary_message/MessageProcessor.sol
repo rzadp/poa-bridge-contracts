@@ -1,4 +1,4 @@
-pragma solidity 0.4.24;
+pragma solidity ^0.5.0;
 
 import "../../upgradeability/EternalStorage.sol";
 import "../../libraries/Bytes.sol";
@@ -44,7 +44,7 @@ contract MessageProcessor is EternalStorage {
     * @param _messageId id of the message from the other side that triggered a call.
     * @param data of the processed message.
     */
-    function setFailedMessageDataHash(bytes32 _messageId, bytes data) internal {
+    function setFailedMessageDataHash(bytes32 _messageId, bytes memory data) internal {
         uintStorage[keccak256(abi.encodePacked("failedMessageDataHash", _messageId))] = uint256(keccak256(data));
     }
 
@@ -186,7 +186,7 @@ contract MessageProcessor is EternalStorage {
     function _passMessage(
         address _sender,
         address _contract,
-        bytes _data,
+        bytes memory _data,
         uint256 _gas,
         bytes32 _messageId,
         uint256 _sourceChainId
@@ -194,7 +194,7 @@ contract MessageProcessor is EternalStorage {
         setMessageSender(_sender);
         setMessageId(_messageId);
         setMessageSourceChainId(_sourceChainId);
-        bool status = _contract.call.gas(_gas)(_data);
+        (bool status, ) = _contract.call.gas(_gas)(_data);
         setMessageSender(address(0));
         setMessageId(bytes32(0));
         setMessageSourceChainId(0);
@@ -202,5 +202,5 @@ contract MessageProcessor is EternalStorage {
     }
 
     /* solcov ignore next */
-    function emitEventOnMessageProcessed(address sender, address executor, bytes32 messageId, bool status) internal;
+    function emitEventOnMessageProcessed(address sender, address executor, bytes32 _messageId, bool status) internal;
 }

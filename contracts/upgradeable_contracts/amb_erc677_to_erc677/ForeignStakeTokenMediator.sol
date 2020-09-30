@@ -1,4 +1,4 @@
-pragma solidity 0.4.24;
+pragma solidity ^0.5.0;
 
 import "./BasicStakeTokenMediator.sol";
 import "../../interfaces/IBurnableMintableERC677Token.sol";
@@ -31,7 +31,7 @@ contract ForeignStakeTokenMediator is BasicStakeTokenMediator {
         ERC677, /* _token */
         address _from,
         uint256 _value,
-        bytes _data
+        bytes memory _data
     ) internal {
         if (!lock()) {
             passMessage(_from, chooseReceiver(_from, _data), _value);
@@ -53,7 +53,7 @@ contract ForeignStakeTokenMediator is BasicStakeTokenMediator {
      * @param _value amount of fixed tokens
      */
     function _transferWithOptionalMint(address _recipient, uint256 _value) internal {
-        IBurnableMintableERC677Token token = IBurnableMintableERC677Token(erc677token());
+        IBurnableMintableERC677Token token = IBurnableMintableERC677Token(address(erc677token()));
         uint256 balance = token.balanceOf(address(this));
         if (balance == 0) {
             token.mint(_recipient, _value);

@@ -1,8 +1,7 @@
-pragma solidity 0.4.24;
+pragma solidity ^0.5.0;
 
 import "./Upgradeable.sol";
 import "./InitializableBridge.sol";
-import "openzeppelin-solidity/contracts/AddressUtils.sol";
 import "./Validatable.sol";
 import "./Ownable.sol";
 import "./Claimable.sol";
@@ -50,7 +49,7 @@ contract BasicBridge is
         return uintStorage[REQUIRED_BLOCK_CONFIRMATIONS];
     }
 
-    function claimTokens(address _token, address _to) public onlyIfUpgradeabilityOwner validAddress(_to) {
+    function claimTokens(address _token, address payable _to) public onlyIfUpgradeabilityOwner validAddress(_to) {
         claimValues(_token, _to);
     }
 

@@ -1,4 +1,4 @@
-pragma solidity 0.4.24;
+pragma solidity ^0.5.0;
 
 import "./ERC677BridgeToken.sol";
 
@@ -12,6 +12,11 @@ contract PermittableToken is ERC677BridgeToken {
 
     mapping(address => uint256) public nonces;
     mapping(address => mapping(address => uint256)) public expirations;
+    mapping(address => mapping(address => uint256)) private _allowed;
+
+    function setAllowance(address owner, address spender, uint256 value) internal returns (uint256) {
+        _allowed[owner][spender] = value;
+    }
 
     constructor(string memory _name, string memory _symbol, uint8 _decimals, uint256 _chainId)
         public
@@ -41,9 +46,7 @@ contract PermittableToken is ERC677BridgeToken {
         require(_sender != address(0));
         require(_recipient != address(0));
 
-        balances[_sender] = balances[_sender].sub(_amount);
-        balances[_recipient] = balances[_recipient].add(_amount);
-        emit Transfer(_sender, _recipient, _amount);
+        _transfer(_sender, _recipient, _amount);
 
         if (_sender != msg.sender) {
             uint256 allowedAmount = allowance(_sender, msg.sender);
@@ -51,8 +54,7 @@ contract PermittableToken is ERC677BridgeToken {
             if (allowedAmount != uint256(-1)) {
                 // If allowance is limited, adjust it.
                 // In this case `transferFrom` works like the generic
-                allowed[_sender][msg.sender] = allowedAmount.sub(_amount);
-                emit Approval(_sender, msg.sender, allowed[_sender][msg.sender]);
+                decreaseAllowance(_sender, _amount);
             } else {
                 // If allowance is unlimited by `permit`, `approve`, or `increaseAllowance`
                 // function, don't adjust it. But the expiration date must be empty or in the future
@@ -129,7 +131,8 @@ contract PermittableToken is ERC677BridgeToken {
 
         uint256 amount = _allowed ? uint256(-1) : 0;
 
-        allowed[_holder][_spender] = amount;
+        setAllowance(_holder, _spender, amount);
+
         expirations[_holder][_spender] = _allowed ? _expiry : 0;
 
         emit Approval(_holder, _spender, amount);

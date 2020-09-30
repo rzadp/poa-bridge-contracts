@@ -1,4 +1,4 @@
-pragma solidity 0.4.24;
+pragma solidity ^0.5.0;
 
 import "./BasicAMBErc20ToNative.sol";
 import "./HomeFeeManagerAMBErc20ToNative.sol";
@@ -28,8 +28,8 @@ contract HomeAMBErc20ToNative is BasicAMBErc20ToNative, BlockRewardBridge, HomeF
     function initialize(
         address _bridgeContract,
         address _mediatorContract,
-        uint256[3] _dailyLimitMaxPerTxMinPerTxArray, // [ 0 = dailyLimit, 1 = maxPerTx, 2 = minPerTx ]
-        uint256[2] _executionDailyLimitExecutionMaxPerTxArray, // [ 0 = executionDailyLimit, 1 = executionMaxPerTx ]
+        uint256[3] memory _dailyLimitMaxPerTxMinPerTxArray, // [ 0 = dailyLimit, 1 = maxPerTx, 2 = minPerTx ]
+        uint256[2] memory _executionDailyLimitExecutionMaxPerTxArray, // [ 0 = executionDailyLimit, 1 = executionMaxPerTx ]
         uint256 _requestGasLimit,
         int256 _decimalShift,
         address _owner,
@@ -68,14 +68,14 @@ contract HomeAMBErc20ToNative is BasicAMBErc20ToNative, BlockRewardBridge, HomeF
     function rewardableInitialize(
         address _bridgeContract,
         address _mediatorContract,
-        uint256[3] _dailyLimitMaxPerTxMinPerTxArray, // [ 0 = dailyLimit, 1 = maxPerTx, 2 = minPerTx ]
-        uint256[2] _executionDailyLimitExecutionMaxPerTxArray, // [ 0 = executionDailyLimit, 1 = executionMaxPerTx ]
+        uint256[3] calldata _dailyLimitMaxPerTxMinPerTxArray, // [ 0 = dailyLimit, 1 = maxPerTx, 2 = minPerTx ]
+        uint256[2] calldata _executionDailyLimitExecutionMaxPerTxArray, // [ 0 = executionDailyLimit, 1 = executionMaxPerTx ]
         uint256 _requestGasLimit,
         int256 _decimalShift,
         address _owner,
         address _blockReward,
-        address[] _rewardAddreses,
-        uint256[2] _fees // [ 0 = homeToForeignFee, 1 = foreignToHomeFee ]
+        address[] calldata _rewardAddreses,
+        uint256[2] calldata _fees // [ 0 = homeToForeignFee, 1 = foreignToHomeFee ]
     ) external returns (bool) {
         _setRewardAddressList(_rewardAddreses);
         _setFee(HOME_TO_FOREIGN_FEE, _fees[0]);
@@ -97,7 +97,7 @@ contract HomeAMBErc20ToNative is BasicAMBErc20ToNative, BlockRewardBridge, HomeF
     * @dev Fallback method to be called to initiate the bridge operation of the native tokens to an erc20 representation
     * that the user will receive in the same address on the other network.
     */
-    function() public payable {
+    function() external payable {
         require(msg.data.length == 0);
         nativeTransfer(msg.sender);
     }
@@ -207,7 +207,7 @@ contract HomeAMBErc20ToNative is BasicAMBErc20ToNative, BlockRewardBridge, HomeF
     * @param _token address of the token.
     * @param _to address that will receive the locked tokens on this contract.
     */
-    function claimTokens(address _token, address _to) external onlyIfUpgradeabilityOwner validAddress(_to) {
+    function claimTokens(address _token, address payable _to) external onlyIfUpgradeabilityOwner validAddress(_to) {
         require(_token != address(0));
         claimValues(_token, _to);
     }
@@ -244,9 +244,9 @@ contract HomeAMBErc20ToNative is BasicAMBErc20ToNative, BlockRewardBridge, HomeF
     * @param _receiver particular reward address, where the fee should be sent/minted.
     * @param _fee amount of fee to send/mint to given address.
     */
-    function onFeeDistribution(bytes32 _feeType, address _receiver, uint256 _fee) internal {
+    function onFeeDistribution(bytes32 _feeType, address payable _receiver, uint256 _fee) internal {
         if (_feeType == HOME_TO_FOREIGN_FEE) {
-            Address.safeSendValue(_receiver, _fee);
+            PoaAddress.safeSendValue(_receiver, _fee);
         } else {
             IBlockReward blockReward = blockRewardContract();
             blockReward.addExtraReceiver(_fee, _receiver);

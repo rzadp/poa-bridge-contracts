@@ -1,4 +1,4 @@
-pragma solidity 0.4.24;
+pragma solidity ^0.5.0;
 
 import "../../interfaces/IBurnableMintableERC677Token.sol";
 import "../BasicForeignBridge.sol";
@@ -14,10 +14,10 @@ contract ForeignBridgeNativeToErc is
     function initialize(
         address _validatorContract,
         address _erc677token,
-        uint256[3] _dailyLimitMaxPerTxMinPerTxArray, // [ 0 = _dailyLimit, 1 = _maxPerTx, 2 = _minPerTx ]
+        uint256[3] calldata _dailyLimitMaxPerTxMinPerTxArray, // [ 0 = _dailyLimit, 1 = _maxPerTx, 2 = _minPerTx ]
         uint256 _foreignGasPrice,
         uint256 _requiredBlockConfirmations,
-        uint256[2] _homeDailyLimitHomeMaxPerTxArray, // [ 0 = _homeDailyLimit, 1 = _homeMaxPerTx ]
+        uint256[2] calldata _homeDailyLimitHomeMaxPerTxArray, // [ 0 = _homeDailyLimit, 1 = _homeMaxPerTx ]
         address _owner,
         int256 _decimalShift,
         address _bridgeOnOtherSide
@@ -40,10 +40,10 @@ contract ForeignBridgeNativeToErc is
     function rewardableInitialize(
         address _validatorContract,
         address _erc677token,
-        uint256[3] _dailyLimitMaxPerTxMinPerTxArray, // [ 0 = _dailyLimit, 1 = _maxPerTx, 2 = _minPerTx ]
+        uint256[3] calldata _dailyLimitMaxPerTxMinPerTxArray, // [ 0 = _dailyLimit, 1 = _maxPerTx, 2 = _minPerTx ]
         uint256 _foreignGasPrice,
         uint256 _requiredBlockConfirmations,
-        uint256[2] _homeDailyLimitHomeMaxPerTxArray, // [ 0 = _homeDailyLimit, 1 = _homeMaxPerTx ]
+        uint256[2] calldata _homeDailyLimitHomeMaxPerTxArray, // [ 0 = _homeDailyLimit, 1 = _homeMaxPerTx ]
         address _owner,
         address _feeManager,
         uint256 _homeFee,
@@ -61,7 +61,7 @@ contract ForeignBridgeNativeToErc is
             _decimalShift,
             _bridgeOnOtherSide
         );
-        require(AddressUtils.isContract(_feeManager));
+        require(Address.isContract(_feeManager));
         addressStorage[FEE_MANAGER_CONTRACT] = _feeManager;
         _setFee(_feeManager, _homeFee, HOME_FEE);
         setInitialize();
@@ -72,23 +72,23 @@ contract ForeignBridgeNativeToErc is
         return 0x92a8d7fe; // bytes4(keccak256(abi.encodePacked("native-to-erc-core")))
     }
 
-    function claimTokensFromErc677(address _token, address _to) external onlyIfUpgradeabilityOwner {
-        IBurnableMintableERC677Token(erc677token()).claimTokens(_token, _to);
+    function claimTokensFromErc677(address _token, address payable _to) external onlyIfUpgradeabilityOwner {
+        IBurnableMintableERC677Token(address(erc677token())).claimTokens(_token, _to);
     }
 
     function _initialize(
         address _validatorContract,
         address _erc677token,
-        uint256[3] _dailyLimitMaxPerTxMinPerTxArray, // [ 0 = _dailyLimit, 1 = _maxPerTx, 2 = _minPerTx ]
+        uint256[3] memory _dailyLimitMaxPerTxMinPerTxArray, // [ 0 = _dailyLimit, 1 = _maxPerTx, 2 = _minPerTx ]
         uint256 _foreignGasPrice,
         uint256 _requiredBlockConfirmations,
-        uint256[2] _homeDailyLimitHomeMaxPerTxArray, // [ 0 = _homeDailyLimit, 1 = _homeMaxPerTx ]
+        uint256[2] memory _homeDailyLimitHomeMaxPerTxArray, // [ 0 = _homeDailyLimit, 1 = _homeMaxPerTx ]
         address _owner,
         int256 _decimalShift,
         address _bridgeOnOtherSide
     ) internal {
         require(!isInitialized());
-        require(AddressUtils.isContract(_validatorContract));
+        require(Address.isContract(_validatorContract));
         require(_owner != address(0));
 
         addressStorage[VALIDATOR_CONTRACT] = _validatorContract;
@@ -114,7 +114,7 @@ contract ForeignBridgeNativeToErc is
                 valueToMint = valueToMint.sub(fee);
             }
         }
-        return IBurnableMintableERC677Token(erc677token()).mint(_recipient, valueToMint);
+        return IBurnableMintableERC677Token(address(erc677token())).mint(_recipient, valueToMint);
     }
 
     function fireEventOnTokenTransfer(address _from, uint256 _value) internal {

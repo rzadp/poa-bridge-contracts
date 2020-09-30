@@ -1,4 +1,4 @@
-pragma solidity 0.4.24;
+pragma solidity ^0.5.0;
 
 import "./UpgradeabilityProxy.sol";
 import "./UpgradeabilityOwnerStorage.sol";
@@ -58,13 +58,14 @@ contract OwnedUpgradeabilityProxy is UpgradeabilityOwnerStorage, UpgradeabilityP
     * @param data represents the msg.data to bet sent in the low level call. This parameter may include the function
     * signature of the implementation to be called with the needed payload
     */
-    function upgradeToAndCall(uint256 version, address implementation, bytes data)
+    function upgradeToAndCall(uint256 version, address implementation, bytes calldata data)
         external
         payable
         onlyUpgradeabilityOwner
     {
         upgradeTo(version, implementation);
         // solhint-disable-next-line avoid-call-value
-        require(address(this).call.value(msg.value)(data));
+        (bool condition, ) = address(this).call.value(msg.value)(data);
+        require(condition);
     }
 }

@@ -1,8 +1,8 @@
-pragma solidity 0.4.24;
+pragma solidity ^0.5.0;
 
-import "./BasicAMBErc20ToNative.sol";
-import "../BaseERC677Bridge.sol";
-import "../ReentrancyGuard.sol";
+import { BasicAMBErc20ToNative } from "./BasicAMBErc20ToNative.sol";
+import { BaseERC677Bridge } from "../BaseERC677Bridge.sol";
+import { ReentrancyGuard } from "../ReentrancyGuard.sol";
 import "../../libraries/SafeERC20.sol";
 
 /**
@@ -31,8 +31,8 @@ contract ForeignAMBErc20ToNative is BasicAMBErc20ToNative, ReentrancyGuard, Base
     function initialize(
         address _bridgeContract,
         address _mediatorContract,
-        uint256[3] _dailyLimitMaxPerTxMinPerTxArray, // [ 0 = dailyLimit, 1 = maxPerTx, 2 = minPerTx ]
-        uint256[2] _executionDailyLimitExecutionMaxPerTxArray, // [ 0 = executionDailyLimit, 1 = executionMaxPerTx ]
+        uint256[3] calldata _dailyLimitMaxPerTxMinPerTxArray, // [ 0 = dailyLimit, 1 = maxPerTx, 2 = minPerTx ]
+        uint256[2] calldata _executionDailyLimitExecutionMaxPerTxArray, // [ 0 = executionDailyLimit, 1 = executionMaxPerTx ]
         uint256 _requestGasLimit,
         int256 _decimalShift,
         address _owner,
@@ -67,7 +67,7 @@ contract ForeignAMBErc20ToNative is BasicAMBErc20ToNative, ReentrancyGuard, Base
     * @param _receiver address that will receive the native tokens on the other network.
     * @param _value amount of tokens to be transferred to the other network.
     */
-    function relayTokens(address _receiver, uint256 _value) external {
+    function relayTokens(address _receiver, uint256 _value) internal {
         // This lock is to prevent calling passMessage twice.
         // When transferFrom is called, after the transfer, the ERC677 token will call onTokenTransfer from this contract
         // which will call passMessage.
@@ -78,7 +78,8 @@ contract ForeignAMBErc20ToNative is BasicAMBErc20ToNative, ReentrancyGuard, Base
         _setMediatorBalance(mediatorBalance().add(_value));
 
         setLock(true);
-        token.safeTransferFrom(msg.sender, _value);
+        SafeERC20.safeTransferFrom(address(token), msg.sender, _value);
+        // token.safeTransferFrom(msg.sender, _value);
         setLock(false);
         bridgeSpecificActionsOnTokenTransfer(token, msg.sender, _value, abi.encodePacked(_receiver));
     }
@@ -92,7 +93,7 @@ contract ForeignAMBErc20ToNative is BasicAMBErc20ToNative, ReentrancyGuard, Base
     * @param _data this parameter could contain the address of an alternative receiver of the tokens on the other network,
     * otherwise it will be empty.
     */
-    function onTokenTransfer(address _from, uint256 _value, bytes _data) external returns (bool) {
+    function onTokenTransfer(address _from, uint256 _value, bytes calldata _data) external returns (bool) {
         ERC677 token = _erc677token();
         require(msg.sender == address(token));
         if (!lock()) {
@@ -109,7 +110,7 @@ contract ForeignAMBErc20ToNative is BasicAMBErc20ToNative, ReentrancyGuard, Base
     * @param _token address of the token, if it is not provided, native tokens will be transferred.
     * @param _to address that will receive the locked tokens on this contract.
     */
-    function claimTokens(address _token, address _to) public onlyIfUpgradeabilityOwner validAddress(_to) {
+    function claimTokens(address _token, address payable _to) public onlyIfUpgradeabilityOwner validAddress(_to) {
         require(_token != address(_erc677token()));
         claimValues(_token, _to);
     }
@@ -152,7 +153,8 @@ contract ForeignAMBErc20ToNative is BasicAMBErc20ToNative, ReentrancyGuard, Base
         bytes32 _messageId = messageId();
 
         _setMediatorBalance(mediatorBalance().sub(valueToTransfer));
-        _erc677token().safeTransfer(_receiver, valueToTransfer);
+        // _erc677token().safeTransfer(_receiver, valueToTransfer);
+        SafeERC20.safeTransfer(address(_erc677token()), _receiver, valueToTransfer);
         emit TokensBridged(_receiver, valueToTransfer, _messageId);
     }
 
@@ -163,7 +165,8 @@ contract ForeignAMBErc20ToNative is BasicAMBErc20ToNative, ReentrancyGuard, Base
     */
     function executeActionOnFixedTokens(address _receiver, uint256 _value) internal {
         _setMediatorBalance(mediatorBalance().sub(_value));
-        _erc677token().safeTransfer(_receiver, _value);
+        // _erc677token().safeTransfer(_receiver, _value);
+        SafeERC20.safeTransfer(address(_erc677token()), _receiver, _value);
     }
 
     /**
@@ -177,7 +180,7 @@ contract ForeignAMBErc20ToNative is BasicAMBErc20ToNative, ReentrancyGuard, Base
         ERC677, /*_token*/
         address _from,
         uint256 _value,
-        bytes _data
+        bytes memory _data
     ) internal {
         if (!lock()) {
             passMessage(_from, chooseReceiver(_from, _data), _value);

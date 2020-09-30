@@ -1,9 +1,9 @@
-pragma solidity 0.4.24;
+pragma solidity ^0.5.0;
 
 import "../libraries/ArbitraryMessage.sol";
 
 contract MessageTest {
-    function unpackData(bytes _data)
+    function unpackData(bytes memory _data)
         public
         pure
         returns (
@@ -12,7 +12,7 @@ contract MessageTest {
             address executor,
             uint32 gasLimit,
             bytes1 dataType,
-            uint256[2] chainIds,
+            uint256[2] memory chainIds,
             uint256 gasPrice,
             bytes memory data
         )
@@ -23,8 +23,8 @@ contract MessageTest {
     }
 
     function unpackDataWithExtraParams(
-        bytes _data,
-        bytes /*signatures*/
+        bytes memory _data,
+        bytes memory /*signatures*/
     )
         public
         pure
@@ -34,7 +34,7 @@ contract MessageTest {
             address executor,
             uint32 gasLimit,
             bytes1 dataType,
-            uint256[2] chainIds,
+            uint256[2] memory chainIds,
             uint256 gasPrice,
             bytes memory data
         )

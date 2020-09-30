@@ -16,7 +16,8 @@ const mochaOptions =
     : {}
 
 const projectRoot = ''
-const solcVersion = '0.4.24+commit.e67f0147'
+// const solcVersion = '0.4.24+commit.e67f0147'
+const solcVersion = '0.5.0'
 const defaultFromAddress = '0x5409ed021d9299bf6814279a6a1411a7e866a631'
 const isVerbose = true
 const artifactAdapter = new TruffleArtifactAdapter(projectRoot, solcVersion)
@@ -104,7 +105,7 @@ module.exports = {
   },
   compilers: {
     solc: {
-      version: '0.4.24',
+      version: '0.5.0',
       settings: {
         optimizer: {
           enabled: true,

@@ -1,4 +1,4 @@
-pragma solidity 0.4.24;
+pragma solidity ^0.5.0;
 
 import "../RewardableBridge.sol";
 
@@ -7,7 +7,7 @@ contract RewardableForeignBridgeNativeToErc is RewardableBridge {
         _setFee(feeManagerContract(), _fee, HOME_FEE);
     }
 
-    function getHomeFee() public view returns (uint256) {
+    function getHomeFee() public returns (uint256) {
         return _getFee(HOME_FEE);
     }
 }

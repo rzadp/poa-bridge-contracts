@@ -16,7 +16,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 /* solhint-disable */
-pragma solidity 0.4.24;
+pragma solidity ^0.5.0;
 
 contract VatMock {
     // --- Auth ---
@@ -70,7 +70,8 @@ contract VatMock {
     uint256 public live; // Access Flag
 
     // --- Logs ---
-    event LogNote(bytes4 indexed sig, bytes32 indexed arg1, bytes32 indexed arg2, bytes32 indexed arg3, bytes data) anonymous;
+    //NOTE: Commenting out seemingly unused event
+    //event LogNote(bytes4 indexed sig, bytes32 indexed arg1, bytes32 indexed arg2, bytes32 indexed arg3, bytes data);
 
     modifier note {
         _;

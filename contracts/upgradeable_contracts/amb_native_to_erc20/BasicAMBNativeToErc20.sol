@@ -1,4 +1,4 @@
-pragma solidity 0.4.24;
+pragma solidity ^0.5.0;
 
 import "../Initializable.sol";
 import "../Upgradeable.sol";
@@ -35,8 +35,8 @@ contract BasicAMBNativeToErc20 is
     function _initialize(
         address _bridgeContract,
         address _mediatorContract,
-        uint256[3] _dailyLimitMaxPerTxMinPerTxArray,
-        uint256[2] _executionDailyLimitExecutionMaxPerTxArray,
+        uint256[3] memory _dailyLimitMaxPerTxMinPerTxArray,
+        uint256[2] memory _executionDailyLimitExecutionMaxPerTxArray,
         uint256 _requestGasLimit,
         int256 _decimalShift,
         address _owner,
@@ -88,7 +88,7 @@ contract BasicAMBNativeToErc20 is
     * @param _token address of the token, if it is not provided, native tokens will be transferred.
     * @param _to address that will receive the locked tokens on this contract.
     */
-    function claimTokens(address _token, address _to) public onlyIfUpgradeabilityOwner validAddress(_to) {
+    function claimTokens(address _token, address payable _to) public onlyIfUpgradeabilityOwner validAddress(_to) {
         claimValues(_token, _to);
     }
 }

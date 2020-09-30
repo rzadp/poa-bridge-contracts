@@ -1,4 +1,4 @@
-pragma solidity 0.4.24;
+pragma solidity ^0.5.0;
 
 import "../upgradeable_contracts/InterestReceiver.sol";
 
@@ -14,8 +14,8 @@ contract InterestReceiverMock is InterestReceiver {
     // solhint-enable no-empty-blocks
 
     function setChaiToken(IChai _chaiToken) external {
-        chaiTokenMock = _chaiToken;
-        daiTokenMock = _chaiToken.daiToken();
+        chaiTokenMock = address(_chaiToken);
+        daiTokenMock = address(_chaiToken.daiToken());
     }
 
     function chaiToken() public view returns (IChai) {

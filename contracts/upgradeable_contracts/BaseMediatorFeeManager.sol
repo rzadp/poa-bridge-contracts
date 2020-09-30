@@ -1,4 +1,4 @@
-pragma solidity 0.4.24;
+pragma solidity ^0.5.0;
 
 import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
@@ -33,7 +33,7 @@ contract BaseMediatorFeeManager is Ownable {
     * @param _fee the fee percentage amount.
     * @param _rewardAccountList list of addresses that will receive the fee rewards.
     */
-    constructor(address _owner, uint256 _fee, address[] _rewardAccountList, address _mediatorContract) public {
+    constructor(address _owner, uint256 _fee, address[] memory _rewardAccountList, address _mediatorContract) public {
         require(_rewardAccountList.length > 0 && _rewardAccountList.length <= MAX_REWARD_ACCOUNTS);
         _transferOwnership(_owner);
         _setFee(_fee);
@@ -70,7 +70,7 @@ contract BaseMediatorFeeManager is Ownable {
         _setFee(_fee);
     }
 
-    function isValidAccount(address _account) internal returns (bool) {
+    function isValidAccount(address _account) internal view returns (bool) {
         return _account != address(0) && _account != mediatorContract;
     }
 
@@ -133,7 +133,7 @@ contract BaseMediatorFeeManager is Ownable {
     * @dev Tells the list of accounts that receives rewards for the operations.
     * @return the list of reward accounts
     */
-    function rewardAccountsList() public view returns (address[]) {
+    function rewardAccountsList() public view returns (address[] memory) {
         return rewardAccounts;
     }
 
@@ -141,7 +141,7 @@ contract BaseMediatorFeeManager is Ownable {
     * @dev ERC677 transfer callback function, received fee is distributed.
     * @param _value amount of transferred tokens
     */
-    function onTokenTransfer(address, uint256 _value, bytes) external returns (bool) {
+    function onTokenTransfer(address, uint256 _value, bytes calldata) external returns (bool) {
         distributeFee(_value);
         return true;
     }

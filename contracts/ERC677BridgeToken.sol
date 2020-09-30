@@ -1,9 +1,10 @@
-pragma solidity 0.4.24;
+pragma solidity ^0.5.0;
 
-import "openzeppelin-solidity/contracts/token/ERC20/BurnableToken.sol";
-import "openzeppelin-solidity/contracts/token/ERC20/MintableToken.sol";
-import "openzeppelin-solidity/contracts/token/ERC20/DetailedERC20.sol";
-import "openzeppelin-solidity/contracts/AddressUtils.sol";
+import "openzeppelin-solidity/contracts/token/ERC20/ERC20Burnable.sol";
+import "openzeppelin-solidity/contracts/token/ERC20/ERC20Mintable.sol";
+import "openzeppelin-solidity/contracts/token/ERC20/ERC20Detailed.sol";
+import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
+import "openzeppelin-solidity/contracts/utils/Address.sol";
 import "./interfaces/IBurnableMintableERC677Token.sol";
 import "./upgradeable_contracts/Claimable.sol";
 
@@ -11,14 +12,24 @@ import "./upgradeable_contracts/Claimable.sol";
 * @title ERC677BridgeToken
 * @dev The basic implementation of a bridgeable ERC677-compatible token
 */
-contract ERC677BridgeToken is IBurnableMintableERC677Token, DetailedERC20, BurnableToken, MintableToken, Claimable {
+contract ERC677BridgeToken is
+    IBurnableMintableERC677Token,
+    ERC20Detailed,
+    ERC20Burnable,
+    ERC20Mintable,
+    Claimable,
+    Ownable
+{
     bytes4 internal constant ON_TOKEN_TRANSFER = 0xa4c0ed36; // onTokenTransfer(address,uint256,bytes)
 
     address internal bridgeContractAddr;
 
     event ContractFallbackCallFailed(address from, address to, uint256 value);
 
-    constructor(string _name, string _symbol, uint8 _decimals) public DetailedERC20(_name, _symbol, _decimals) {
+    constructor(string memory _name, string memory _symbol, uint8 _decimals)
+        public
+        ERC20Detailed(_name, _symbol, _decimals)
+    {
         // solhint-disable-previous-line no-empty-blocks
     }
 
@@ -27,7 +38,7 @@ contract ERC677BridgeToken is IBurnableMintableERC677Token, DetailedERC20, Burna
     }
 
     function setBridgeContract(address _bridgeContract) external onlyOwner {
-        require(AddressUtils.isContract(_bridgeContract));
+        require(Address.isContract(_bridgeContract));
         bridgeContractAddr = _bridgeContract;
     }
 
@@ -37,11 +48,15 @@ contract ERC677BridgeToken is IBurnableMintableERC677Token, DetailedERC20, Burna
         _;
     }
 
-    function transferAndCall(address _to, uint256 _value, bytes _data) external validRecipient(_to) returns (bool) {
+    function transferAndCall(address _to, uint256 _value, bytes calldata _data)
+        external
+        validRecipient(_to)
+        returns (bool)
+    {
         require(superTransfer(_to, _value));
         emit Transfer(msg.sender, _to, _value, _data);
 
-        if (AddressUtils.isContract(_to)) {
+        if (Address.isContract(_to)) {
             require(contractFallback(msg.sender, _to, _value, _data));
         }
         return true;
@@ -68,7 +83,7 @@ contract ERC677BridgeToken is IBurnableMintableERC677Token, DetailedERC20, Burna
     }
 
     function callAfterTransfer(address _from, address _to, uint256 _value) internal {
-        if (AddressUtils.isContract(_to) && !contractFallback(_from, _to, _value, new bytes(0))) {
+        if (Address.isContract(_to) && !contractFallback(_from, _to, _value, new bytes(0))) {
             require(!isBridge(_to));
             emit ContractFallbackCallFailed(_from, _to, _value);
         }
@@ -85,8 +100,9 @@ contract ERC677BridgeToken is IBurnableMintableERC677Token, DetailedERC20, Burna
      * @param _value amount of tokens that was sent
      * @param _data set of extra bytes that can be passed to the recipient
      */
-    function contractFallback(address _from, address _to, uint256 _value, bytes _data) private returns (bool) {
-        return _to.call(abi.encodeWithSelector(ON_TOKEN_TRANSFER, _from, _value, _data));
+    function contractFallback(address _from, address _to, uint256 _value, bytes memory _data) private returns (bool) {
+        (bool result, ) = _to.call(abi.encodeWithSelector(ON_TOKEN_TRANSFER, _from, _value, _data));
+        return result;
     }
 
     function finishMinting() public returns (bool) {
@@ -97,15 +113,15 @@ contract ERC677BridgeToken is IBurnableMintableERC677Token, DetailedERC20, Burna
         revert();
     }
 
-    function claimTokens(address _token, address _to) public onlyOwner validAddress(_to) {
+    function claimTokens(address _token, address payable _to) public onlyOwner validAddress(_to) {
         claimValues(_token, _to);
     }
 
     function increaseAllowance(address spender, uint256 addedValue) public returns (bool) {
-        return super.increaseApproval(spender, addedValue);
+        return super.increaseAllowance(spender, addedValue);
     }
 
     function decreaseAllowance(address spender, uint256 subtractedValue) public returns (bool) {
-        return super.decreaseApproval(spender, subtractedValue);
+        return super.decreaseAllowance(spender, subtractedValue);
     }
 }

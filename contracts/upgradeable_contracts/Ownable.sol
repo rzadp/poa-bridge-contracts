@@ -1,4 +1,4 @@
-pragma solidity 0.4.24;
+pragma solidity ^0.5.0;
 
 import "../upgradeability/EternalStorage.sol";
 import "../interfaces/IUpgradeabilityOwnerStorage.sol";
@@ -31,9 +31,10 @@ contract Ownable is EternalStorage {
     */
     modifier onlyRelevantSender() {
         // proxy owner if used through proxy, address(0) otherwise
+        (bool condition, ) = address(this).call(abi.encodeWithSelector(UPGRADEABILITY_OWNER));
         require(
-            !address(this).call(abi.encodeWithSelector(UPGRADEABILITY_OWNER)) || // covers usage without calling through storage proxy
-                msg.sender == IUpgradeabilityOwnerStorage(this).upgradeabilityOwner() || // covers usage through regular proxy calls
+            !condition || // covers usage without calling through storage proxy
+                msg.sender == IUpgradeabilityOwnerStorage(address(this)).upgradeabilityOwner() || // covers usage through regular proxy calls
                 msg.sender == address(this) // covers calls through upgradeAndCall proxy method
         );
         /* solcov ignore next */

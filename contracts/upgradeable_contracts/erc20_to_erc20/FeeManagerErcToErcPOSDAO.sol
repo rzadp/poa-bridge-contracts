@@ -1,4 +1,4 @@
-pragma solidity 0.4.24;
+pragma solidity ^0.5.0;
 
 import "../BlockRewardFeeManager.sol";
 
@@ -8,7 +8,7 @@ contract FeeManagerErcToErcPOSDAO is BlockRewardFeeManager {
     }
 
     function blockRewardContract() external view returns (address) {
-        return _blockRewardContract();
+        return address(_blockRewardContract());
     }
 
     function setBlockRewardContract(address _blockReward) external {

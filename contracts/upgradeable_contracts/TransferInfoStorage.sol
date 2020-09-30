@@ -1,4 +1,4 @@
-pragma solidity 0.4.24;
+pragma solidity ^0.5.0;
 
 import "../upgradeability/EternalStorage.sol";
 
@@ -33,7 +33,7 @@ contract TransferInfoStorage is EternalStorage {
     * @dev Tells the receiver of a message sent to the AMB bridge.
     * @return address of the receiver.
     */
-    function messageRecipient(bytes32 _messageId) internal view returns (address) {
+    function messageRecipient(bytes32 _messageId) internal view returns (address payable) {
         return addressStorage[keccak256(abi.encodePacked("messageRecipient", _messageId))];
     }
 

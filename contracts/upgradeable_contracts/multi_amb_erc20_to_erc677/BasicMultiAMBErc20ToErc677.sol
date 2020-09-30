@@ -1,4 +1,4 @@
-pragma solidity 0.4.24;
+pragma solidity ^0.5.0;
 
 import "../../interfaces/IAMB.sol";
 import "./MultiTokenBridgeMediator.sol";
@@ -75,17 +75,18 @@ contract BasicMultiAMBErc20ToErc677 is
     * @param _token address of claimed token, address(0) for native
     * @param _to address of tokens receiver
     */
-    function claimTokens(address _token, address _to) external onlyIfUpgradeabilityOwner validAddress(_to) {
+    function claimTokens(address _token, address payable _to) external onlyIfUpgradeabilityOwner validAddress(_to) {
         require(_token == address(0) || !isTokenRegistered(_token)); // native coins or token not registered
         claimValues(_token, _to);
     }
 
     /* solcov ignore next */
-    function onTokenTransfer(address _from, uint256 _value, bytes _data) public returns (bool);
+    function onTokenTransfer(address _from, uint256 _value, bytes memory _data) public returns (bool);
 
     /* solcov ignore next */
     function _relayTokens(ERC677 token, address _receiver, uint256 _value) internal;
 
     /* solcov ignore next */
-    function bridgeSpecificActionsOnTokenTransfer(ERC677 _token, address _from, uint256 _value, bytes _data) internal;
+    function bridgeSpecificActionsOnTokenTransfer(ERC677 _token, address _from, uint256 _value, bytes memory _data)
+        internal;
 }

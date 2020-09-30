@@ -1,6 +1,6 @@
-pragma solidity 0.4.24;
+pragma solidity ^0.5.0;
 
-import "openzeppelin-solidity/contracts/AddressUtils.sol";
+import "openzeppelin-solidity/contracts/utils/Address.sol";
 import "./Ownable.sol";
 import "./FeeTypes.sol";
 
@@ -18,7 +18,7 @@ contract RewardableBridge is Ownable, FeeTypes {
     bytes4 internal constant DISTRIBUTE_FEE_FROM_SIGNATURES = 0x59d78464; // distributeFeeFromSignatures(uint256)
     bytes4 internal constant DISTRIBUTE_FEE_FROM_AFFIRMATION = 0x054d46ec; // distributeFeeFromAffirmation(uint256)
 
-    function _getFee(bytes32 _feeType) internal view returns (uint256) {
+    function _getFee(bytes32 _feeType) internal returns (uint256) {
         uint256 fee;
         address feeManager = feeManagerContract();
         bytes4 method = _feeType == HOME_FEE ? GET_HOME_FEE : GET_FOREIGN_FEE;
@@ -36,7 +36,7 @@ contract RewardableBridge is Ownable, FeeTypes {
         return fee;
     }
 
-    function getFeeManagerMode() external view returns (bytes4) {
+    function getFeeManagerMode() external returns (bytes4) {
         bytes4 mode;
         bytes memory callData = abi.encodeWithSelector(GET_FEE_MANAGER_MODE);
         address feeManager = feeManagerContract();
@@ -57,20 +57,17 @@ contract RewardableBridge is Ownable, FeeTypes {
     }
 
     function setFeeManagerContract(address _feeManager) external onlyOwner {
-        require(_feeManager == address(0) || AddressUtils.isContract(_feeManager));
+        require(_feeManager == address(0) || Address.isContract(_feeManager));
         addressStorage[FEE_MANAGER_CONTRACT] = _feeManager;
     }
 
     function _setFee(address _feeManager, uint256 _fee, bytes32 _feeType) internal {
         bytes4 method = _feeType == HOME_FEE ? SET_HOME_FEE : SET_FOREIGN_FEE;
-        require(_feeManager.delegatecall(abi.encodeWithSelector(method, _fee)));
+        (bool condition, ) = _feeManager.delegatecall(abi.encodeWithSelector(method, _fee));
+        require(condition);
     }
 
-    function calculateFee(uint256 _value, bool _recover, address _impl, bytes32 _feeType)
-        internal
-        view
-        returns (uint256)
-    {
+    function calculateFee(uint256 _value, bool _recover, address _impl, bytes32 _feeType) internal returns (uint256) {
         uint256 fee;
         bytes memory callData = abi.encodeWithSelector(CALCULATE_FEE, _value, _recover, _feeType);
         assembly {
@@ -86,12 +83,14 @@ contract RewardableBridge is Ownable, FeeTypes {
     }
 
     function distributeFeeFromSignatures(uint256 _fee, address _feeManager, bytes32 _txHash) internal {
-        require(_feeManager.delegatecall(abi.encodeWithSelector(DISTRIBUTE_FEE_FROM_SIGNATURES, _fee)));
+        (bool condition, ) = _feeManager.delegatecall(abi.encodeWithSelector(DISTRIBUTE_FEE_FROM_SIGNATURES, _fee));
+        require(condition);
         emit FeeDistributedFromSignatures(_fee, _txHash);
     }
 
     function distributeFeeFromAffirmation(uint256 _fee, address _feeManager, bytes32 _txHash) internal {
-        require(_feeManager.delegatecall(abi.encodeWithSelector(DISTRIBUTE_FEE_FROM_AFFIRMATION, _fee)));
+        (bool condition, ) = _feeManager.delegatecall(abi.encodeWithSelector(DISTRIBUTE_FEE_FROM_AFFIRMATION, _fee));
+        require(condition);
         emit FeeDistributedFromAffirmation(_fee, _txHash);
     }
 }

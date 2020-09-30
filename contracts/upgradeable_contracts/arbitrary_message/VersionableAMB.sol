@@ -1,4 +1,4 @@
-pragma solidity 0.4.24;
+pragma solidity ^0.5.0;
 
 import "../VersionableBridge.sol";
 
@@ -10,7 +10,7 @@ contract VersionableAMB is VersionableBridge {
     // - new field appears
     // - some field removed
     // - fields order is changed
-    bytes32 internal constant MESSAGE_PACKING_VERSION = 0x00050000 << 224;
+    bytes32 internal constant MESSAGE_PACKING_VERSION = bytes32(int256(0x00050000 << 224));
 
     /**
      * Returns currently used bridge version

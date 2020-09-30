@@ -1,4 +1,4 @@
-pragma solidity 0.4.24;
+pragma solidity ^0.5.0;
 
 import "./HomeBridgeErcToErc.sol";
 
@@ -8,14 +8,14 @@ contract HomeBridgeErcToErcPOSDAO is HomeBridgeErcToErc {
 
     function rewardableInitialize(
         address _validatorContract,
-        uint256[3] _dailyLimitMaxPerTxMinPerTxArray, // [ 0 = _dailyLimit, 1 = _maxPerTx, 2 = _minPerTx ]
+        uint256[3] calldata _dailyLimitMaxPerTxMinPerTxArray, // [ 0 = _dailyLimit, 1 = _maxPerTx, 2 = _minPerTx ]
         uint256 _homeGasPrice,
         uint256 _requiredBlockConfirmations,
         address _erc677token,
-        uint256[2] _foreignDailyLimitForeignMaxPerTxArray, // [ 0 = _foreignDailyLimit, 1 = _foreignMaxPerTx ]
+        uint256[2] calldata _foreignDailyLimitForeignMaxPerTxArray, // [ 0 = _foreignDailyLimit, 1 = _foreignMaxPerTx ]
         address _owner,
         address _feeManager,
-        uint256[2] _homeFeeForeignFeeArray, // [ 0 = _homeFee, 1 = _foreignFee ]
+        uint256[2] calldata _homeFeeForeignFeeArray, // [ 0 = _homeFee, 1 = _foreignFee ]
         address _blockReward,
         int256 _decimalShift
     ) external onlyRelevantSender returns (bool) {
@@ -37,7 +37,7 @@ contract HomeBridgeErcToErcPOSDAO is HomeBridgeErcToErc {
         return isInitialized();
     }
 
-    function blockRewardContract() public view returns (address) {
+    function blockRewardContract() public returns (address) {
         address blockReward;
         address feeManager = feeManagerContract();
         bytes memory callData = abi.encodeWithSelector(BLOCK_REWARD_CONTRACT_SELECTOR);
@@ -61,6 +61,7 @@ contract HomeBridgeErcToErcPOSDAO is HomeBridgeErcToErc {
     }
 
     function _setBlockRewardContract(address _feeManager, address _blockReward) internal {
-        require(_feeManager.delegatecall(abi.encodeWithSelector(SET_BLOCK_REWARD_CONTRACT, _blockReward)));
+        (bool condition, ) = _feeManager.delegatecall(abi.encodeWithSelector(SET_BLOCK_REWARD_CONTRACT, _blockReward));
+        require(condition);
     }
 }

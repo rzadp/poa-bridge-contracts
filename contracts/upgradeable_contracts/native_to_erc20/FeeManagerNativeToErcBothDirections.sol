@@ -1,4 +1,4 @@
-pragma solidity 0.4.24;
+pragma solidity ^0.5.0;
 
 import "../../libraries/Address.sol";
 import "../ValidatorsFeeManager.sol";
@@ -8,15 +8,15 @@ contract FeeManagerNativeToErcBothDirections is ValidatorsFeeManager {
         return 0xd7de965f; // bytes4(keccak256(abi.encodePacked("manages-both-directions")))
     }
 
-    function onAffirmationFeeDistribution(address _rewardAddress, uint256 _fee) internal {
+    function onAffirmationFeeDistribution(address payable _rewardAddress, uint256 _fee) internal {
         _sendReward(_rewardAddress, _fee);
     }
 
-    function onSignatureFeeDistribution(address _rewardAddress, uint256 _fee) internal {
+    function onSignatureFeeDistribution(address payable _rewardAddress, uint256 _fee) internal {
         _sendReward(_rewardAddress, _fee);
     }
 
-    function _sendReward(address _rewardAddress, uint256 _fee) internal {
+    function _sendReward(address payable _rewardAddress, uint256 _fee) internal {
         Address.safeSendValue(_rewardAddress, _fee);
     }
 }

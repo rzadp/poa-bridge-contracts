@@ -1,5 +1,5 @@
 //solhint-disable
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.0;
 
 contract Rlp {
     uint256 constant ADDRESS_BYTES = 20;
@@ -7,9 +7,9 @@ contract Rlp {
     uint256 constant MAX_NONCE = 256**9 - 1;
 
     // count number of bytes required to represent an unsigned integer
-    function count_bytes(uint256 n) pure internal returns (uint256 c) {
-        uint i = 0;
-        uint mask = 1;
+    function count_bytes(uint256 n) internal pure returns (uint256 c) {
+        uint256 i = 0;
+        uint256 mask = 1;
         while (n >= mask) {
             i += 1;
             mask *= 256;
@@ -18,7 +18,7 @@ contract Rlp {
         return i;
     }
 
-    function mk_contract_address(address a, uint256 n) pure internal returns (address rlp) {
+    function mk_contract_address(address a, uint256 n) internal pure returns (address rlp) {
         /*
          * make sure the RLP encoding fits in one word:
          * total_length      1 byte
@@ -52,9 +52,7 @@ contract Rlp {
 
         // concatenate all parts of the RLP encoding in the leading bytes of
         // one 32-byte word
-        uint256 word = ((192 + tot_bytes) * 256**31) +
-                       ((128 + ADDRESS_BYTES) * 256**30) +
-                       (uint256(a) * 256**10);
+        uint256 word = ((192 + tot_bytes) * 256**31) + ((128 + ADDRESS_BYTES) * 256**30) + (uint256(a) * 256**10);
 
         if (0 < n && n < MAX_SINGLE_BYTE) {
             word += n * 256**9;
@@ -66,10 +64,9 @@ contract Rlp {
         uint256 hash;
 
         assembly {
-            let mem_start := mload(0x40)        // get a pointer to free memory
-            mstore(mem_start, word)             // store the rlp encoding
-            hash := sha3(mem_start,
-                         add(tot_bytes, 1))     // hash the rlp encoding
+            let mem_start := mload(0x40) // get a pointer to free memory
+            mstore(mem_start, word) // store the rlp encoding
+            hash := keccak256(mem_start, add(tot_bytes, 1)) // hash the rlp encoding
         }
 
         // interpret hash as address (20 least significant bytes)
@@ -92,7 +89,7 @@ contract GasTokenMock is Rlp {
     event Approval(address indexed owner, address indexed spender, uint256 value);
 
     // Spec: Get the account balance of another account with address `owner`
-    function balanceOf(address owner) public constant returns (uint256 balance) {
+    function balanceOf(address owner) public view returns (uint256 balance) {
         return s_balances[owner];
     }
 
@@ -100,7 +97,7 @@ contract GasTokenMock is Rlp {
         if (value <= s_balances[from]) {
             s_balances[from] -= value;
             s_balances[to] += value;
-            Transfer(from, to, value);
+            emit Transfer(from, to, value);
             return true;
         } else {
             return false;
@@ -116,7 +113,7 @@ contract GasTokenMock is Rlp {
     // Spec: Send `value` amount of tokens from address `from` to address `to`
     function transferFrom(address from, address to, uint256 value) public returns (bool success) {
         address spender = msg.sender;
-        if(value <= s_allowances[from][spender] && internalTransfer(from, to, value)) {
+        if (value <= s_allowances[from][spender] && internalTransfer(from, to, value)) {
             s_allowances[from][spender] -= value;
             return true;
         } else {
@@ -133,7 +130,7 @@ contract GasTokenMock is Rlp {
             return false;
         }
         s_allowances[owner][spender] = value;
-        Approval(owner, spender, value);
+        emit Approval(owner, spender, value);
         return true;
     }
 
@@ -142,7 +139,7 @@ contract GasTokenMock is Rlp {
     // What if the allowance is higher than the balance of the `owner`?
     // Callers should be careful to use min(allowance, balanceOf) to make sure
     // that the allowance is actually present in the account!
-    function allowance(address owner, address spender) public constant returns (uint256 remaining) {
+    function allowance(address owner, address spender) public view returns (uint256 remaining) {
         return s_allowances[owner][spender];
     }
 
@@ -150,9 +147,9 @@ contract GasTokenMock is Rlp {
     // GasToken specifics
     //////////////////////////////////////////////////////////////////////////
 
-    uint8 constant public decimals = 2;
-    string constant public name = "Gastoken.io";
-    string constant public symbol = "GST2";
+    uint8 public constant decimals = 2;
+    string public constant name = "Gastoken.io";
+    string public constant symbol = "GST2";
 
     // We build a queue of nonces at which child contracts are stored. s_head is
     // the nonce at the head of the queue, s_tail is the nonce behind the tail
@@ -170,7 +167,7 @@ contract GasTokenMock is Rlp {
     // totalSupply gives  the number of tokens currently in existence
     // Each token corresponds to one child contract that can be SELFDESTRUCTed
     // for a gas refund.
-    function totalSupply() public constant returns (uint256 supply) {
+    function totalSupply() public view returns (uint256 supply) {
         return s_head - s_tail;
     }
 
@@ -235,7 +232,7 @@ contract GasTokenMock is Rlp {
         uint256 tail = s_tail;
         // tail points to slot behind the last contract in the queue
         for (uint256 i = tail + 1; i <= tail + value; i++) {
-            mk_contract_address(this, i).call();
+            mk_contract_address(address(this), i).call("");
         }
 
         s_tail = tail + value;
@@ -287,7 +284,7 @@ contract GasTokenMock is Rlp {
             return false;
         }
 
-        mapping(address => uint256) from_allowances = s_allowances[from];
+        mapping(address => uint256) storage from_allowances = s_allowances[from];
         uint256 spender_allowance = from_allowances[spender];
         if (value > spender_allowance) {
             return false;
@@ -312,7 +309,7 @@ contract GasTokenMock is Rlp {
             value = from_balance;
         }
 
-        mapping(address => uint256) from_allowances = s_allowances[from];
+        mapping(address => uint256) storage from_allowances = s_allowances[from];
         uint256 spender_allowance = from_allowances[spender];
         if (value > spender_allowance) {
             value = spender_allowance;

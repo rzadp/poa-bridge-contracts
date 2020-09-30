@@ -1,7 +1,7 @@
-pragma solidity 0.4.24;
+pragma solidity ^0.5.0;
 
 import "./Ownable.sol";
-import "openzeppelin-solidity/contracts/AddressUtils.sol";
+import "openzeppelin-solidity/contracts/utils/Address.sol";
 import "../interfaces/IMediatorFeeManager.sol";
 
 /**
@@ -27,7 +27,7 @@ contract RewardableMediator is Ownable {
     * @param _feeManager the address of the fee manager contract.
     */
     function _setFeeManagerContract(address _feeManager) internal {
-        require(_feeManager == address(0) || AddressUtils.isContract(_feeManager));
+        require(_feeManager == address(0) || Address.isContract(_feeManager));
         addressStorage[FEE_MANAGER_CONTRACT] = _feeManager;
     }
 
@@ -46,8 +46,9 @@ contract RewardableMediator is Ownable {
     * @param _messageId id of the message that generated fee distribution
     */
     function distributeFee(IMediatorFeeManager _feeManager, uint256 _fee, bytes32 _messageId) internal {
-        onFeeDistribution(_feeManager, _fee);
-        _feeManager.call(abi.encodeWithSelector(ON_TOKEN_TRANSFER, address(this), _fee, ""));
+        address __feeManager = address(_feeManager);
+        onFeeDistribution(__feeManager, _fee);
+        __feeManager.call(abi.encodeWithSelector(ON_TOKEN_TRANSFER, address(this), _fee, ""));
         emit FeeDistributed(_fee, _messageId);
     }
 

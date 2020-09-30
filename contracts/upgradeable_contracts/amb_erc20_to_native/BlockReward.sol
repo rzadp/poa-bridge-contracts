@@ -1,4 +1,4 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.0;
 
 import "../../upgradeability/EternalStorage.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
@@ -42,7 +42,8 @@ contract BlockReward is EternalStorage {
     * @dev Return the allowed bridge addresses.
     * @return List of bridge contracts addresses.
     */
-    function bridgesAllowed() public view returns (address[bridgesAllowedLength]) {
+    function bridgesAllowed() public view returns (address payable[bridgesAllowedLength] memory) {
+        // Question for review: Can this be payable?
         // These values must be changed before deploy
         return [address(0x0000000000000000000000000000000000000000)];
     }
@@ -80,7 +81,11 @@ contract BlockReward is EternalStorage {
     * @param kind list of reward types for addresses in benefactors list, should be empty.
     * @return tuple of addresses list and values list of the same length that describes where and how much new coins should be minted.
     */
-    function reward(address[] benefactors, uint16[] kind) external onlySystem returns (address[], uint256[]) {
+    function reward(address[] calldata benefactors, uint16[] calldata kind)
+        external
+        onlySystem
+        returns (address[] memory, uint256[] memory)
+    {
         require(benefactors.length == 0);
         require(kind.length == 0);
 
@@ -241,7 +246,7 @@ contract BlockReward is EternalStorage {
     * @return true, if given address is associated with one of the registered bridges.
     */
     function _isBridgeContract(address _addr) private view returns (bool) {
-        address[bridgesAllowedLength] memory bridges = bridgesAllowed();
+        address payable[bridgesAllowedLength] memory bridges = bridgesAllowed(); //Question for review: does it need to be payable?
 
         for (uint256 i = 0; i < bridges.length; i++) {
             if (_addr == bridges[i]) {

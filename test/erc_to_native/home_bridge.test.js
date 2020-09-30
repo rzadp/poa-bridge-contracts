@@ -305,7 +305,7 @@ contract('HomeBridge_ERC20_to_Native', async accounts => {
       true.should.be.equal(await homeContract.isInitialized())
     })
   })
-  describe('#rewardableInitialize', async () => {
+  describe.only('#rewardableInitialize', async () => {
     let feeManager
     let homeFee
     let foreignFee

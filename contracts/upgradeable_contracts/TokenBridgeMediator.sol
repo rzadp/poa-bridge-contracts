@@ -1,4 +1,4 @@
-pragma solidity 0.4.24;
+pragma solidity ^0.5.0;
 
 import "./BasicAMBMediator.sol";
 import "./BasicTokenBridge.sol";
@@ -40,7 +40,7 @@ contract TokenBridgeMediator is BasicAMBMediator, BasicTokenBridge, TransferInfo
     * @param _recipient address that will receive the tokens
     * @param _value amount of tokens to be received
     */
-    function handleBridgedTokens(address _recipient, uint256 _value) external onlyMediator {
+    function handleBridgedTokens(address payable _recipient, uint256 _value) external onlyMediator {
         if (withinExecutionLimit(_value)) {
             addTotalExecutedPerDay(getCurrentDay(), _value);
             executeActionOnBridgedTokens(_recipient, _value);
@@ -72,7 +72,7 @@ contract TokenBridgeMediator is BasicAMBMediator, BasicTokenBridge, TransferInfo
     function fixFailedMessage(bytes32 _messageId) external onlyMediator {
         require(!messageFixed(_messageId));
 
-        address recipient = messageRecipient(_messageId);
+        address payable recipient = messageRecipient(_messageId);
         uint256 value = messageValue(_messageId);
         setMessageFixed(_messageId);
         executeActionOnFixedTokens(recipient, value);
@@ -83,8 +83,8 @@ contract TokenBridgeMediator is BasicAMBMediator, BasicTokenBridge, TransferInfo
     function executeActionOnBridgedTokensOutOfLimit(address _recipient, uint256 _value) internal;
 
     /* solcov ignore next */
-    function executeActionOnBridgedTokens(address _recipient, uint256 _value) internal;
+    function executeActionOnBridgedTokens(address payable _recipient, uint256 _value) internal;
 
     /* solcov ignore next */
-    function executeActionOnFixedTokens(address _recipient, uint256 _value) internal;
+    function executeActionOnFixedTokens(address payable _recipient, uint256 _value) internal;
 }

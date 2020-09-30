@@ -1,12 +1,17 @@
-pragma solidity 0.4.24;
+pragma solidity ^0.5.0;
 
 import "./ERC677MultiBridgeToken.sol";
 
 contract ERC677BridgeTokenRewardable is ERC677MultiBridgeToken {
     address public blockRewardContract;
     address public stakingContract;
+    mapping(address => uint256) private _balances;
 
-    constructor(string _name, string _symbol, uint8 _decimals, uint256 _chainId)
+    function setBalanceOf(address owner, uint256 value) internal returns (uint256) {
+        _balances[owner] = value;
+    }
+
+    constructor(string memory _name, string memory _symbol, uint8 _decimals, uint256 _chainId)
         public
         ERC677MultiBridgeToken(_name, _symbol, _decimals, _chainId)
     {
@@ -14,12 +19,12 @@ contract ERC677BridgeTokenRewardable is ERC677MultiBridgeToken {
     }
 
     function setBlockRewardContract(address _blockRewardContract) external onlyOwner {
-        require(AddressUtils.isContract(_blockRewardContract));
+        require(Address.isContract(_blockRewardContract));
         blockRewardContract = _blockRewardContract;
     }
 
     function setStakingContract(address _stakingContract) external onlyOwner {
-        require(AddressUtils.isContract(_stakingContract));
+        require(Address.isContract(_stakingContract));
         require(balanceOf(_stakingContract) == 0);
         stakingContract = _stakingContract;
     }
@@ -40,16 +45,14 @@ contract ERC677BridgeTokenRewardable is ERC677MultiBridgeToken {
         if (_amount == 0) return;
         // Mint `_amount` for the BlockReward contract
         address to = blockRewardContract;
-        totalSupply_ = totalSupply_.add(_amount);
-        balances[to] = balances[to].add(_amount);
+        _mint(to, _amount);
         emit Mint(to, _amount);
-        emit Transfer(address(0), to, _amount);
     }
 
     function stake(address _staker, uint256 _amount) external onlyStakingContract {
         // Transfer `_amount` from `_staker` to `stakingContract`
-        balances[_staker] = balances[_staker].sub(_amount);
-        balances[stakingContract] = balances[stakingContract].add(_amount);
+        setBalanceOf(_staker, balanceOf(_staker).sub(_amount));
+        setBalanceOf(stakingContract, balanceOf(stakingContract).add(_amount));
         emit Transfer(_staker, stakingContract, _amount);
     }
 
@@ -65,4 +68,5 @@ contract ERC677BridgeTokenRewardable is ERC677MultiBridgeToken {
         return super.transferFrom(_from, _to, _value);
     }
 
+    event Mint(address indexed to, uint256 amount);
 }
