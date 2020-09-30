@@ -44,7 +44,7 @@ contract ValidatorsFeeManager is BaseFeeManager, ValidatorStorage {
                 feeToDistribute = feeToDistribute.add(diff);
             }
 
-            address rewardAddress = validators.getValidatorRewardAddress(nextValidator);
+            address payable rewardAddress = validators.getValidatorRewardAddress(nextValidator);
             onFeeDistribution(rewardAddress, feeToDistribute, _direction);
 
             nextValidator = validators.getNextValidator(nextValidator);
@@ -53,7 +53,7 @@ contract ValidatorsFeeManager is BaseFeeManager, ValidatorStorage {
         }
     }
 
-    function onFeeDistribution(address _rewardAddress, uint256 _fee, bytes32 _direction) internal {
+    function onFeeDistribution(address payable _rewardAddress, uint256 _fee, bytes32 _direction) internal {
         if (_direction == REWARD_FOR_TRANSFERRING_FROM_FOREIGN) {
             onAffirmationFeeDistribution(_rewardAddress, _fee);
         } else {
@@ -65,5 +65,5 @@ contract ValidatorsFeeManager is BaseFeeManager, ValidatorStorage {
     function onAffirmationFeeDistribution(address _rewardAddress, uint256 _fee) internal;
 
     /* solcov ignore next */
-    function onSignatureFeeDistribution(address _rewardAddress, uint256 _fee) internal;
+    function onSignatureFeeDistribution(address payable _rewardAddress, uint256 _fee) internal;
 }
