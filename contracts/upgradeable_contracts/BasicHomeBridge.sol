@@ -21,7 +21,7 @@ contract BasicHomeBridge is EternalStorage, Validatable, BasicBridge, BasicToken
         uint256 NumberOfCollectedSignatures
     );
 
-    function executeAffirmation(address recipient, uint256 value, bytes32 transactionHash) external onlyValidator {
+    function executeAffirmation(address payable recipient, uint256 value, bytes32 transactionHash) external onlyValidator {
         if (withinExecutionLimit(value)) {
             bytes32 hashMsg = keccak256(abi.encodePacked(recipient, value, transactionHash));
             bytes32 hashSender = keccak256(abi.encodePacked(msg.sender, hashMsg));
@@ -92,7 +92,7 @@ contract BasicHomeBridge is EternalStorage, Validatable, BasicBridge, BasicToken
     }
 
     /* solcov ignore next */
-    function onExecuteAffirmation(address, uint256, bytes32) internal returns (bool);
+    function onExecuteAffirmation(address payable, uint256, bytes32) internal returns (bool);
 
     /* solcov ignore next */
     function onSignaturesCollected(bytes memory) internal;
